@@ -2,24 +2,37 @@ group 'balotenketo'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.0.4'
+    ext {
+        kotlinVersion = '1.0.3'
+        springBootVersion = '1.4.1.RELEASE'
+    }
 
     repositories {
         mavenCentral()
     }
+
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
     }
 }
 
 apply plugin: 'kotlin'
+apply plugin: 'eclipse'
+apply plugin: 'spring-boot'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 repositories {
     mavenCentral()
-    maven { url "https://jitpack.io" }
+	maven { url "https://jitpack.io" }
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile 'org.springframework.boot:spring-boot-starter'
+    compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
     compile 'com.github.slimaku:kondorcet:v1.0-rc2'
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
 }
