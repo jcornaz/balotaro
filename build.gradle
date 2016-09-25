@@ -30,9 +30,13 @@ repositories {
 }
 
 dependencies {
-    compile 'org.springframework.boot:spring-boot-starter'
+    compile 'org.springframework.boot:spring-boot-starter-web'
     compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
     compile 'com.github.slimaku:kondorcet:v1.0-rc2'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
+}
+
+springBoot {
+    mainClass = 'balotenketo.balotaro.BalotaroKt'
 }

@@ -1,11 +1,11 @@
-package balotenko
+package balotenketo.balotaro
 
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 
 @SpringBootApplication
-open class BalotaroApplication
+open class Balotaro
 
 fun main(args: Array<String>) {
-    SpringApplication.run(BalotaroApplication::class.java, *args)
+    SpringApplication.run(Balotaro::class.java, *args)
 }
