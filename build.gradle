@@ -3,8 +3,9 @@ version '1.0-SNAPSHOT'
 
 buildscript {
     ext {
-        kotlinVersion = '1.0.3'
+        kotlinVersion = '1.0.4'
         springBootVersion = '1.4.1.RELEASE'
+        stormPathVersion = '1.0.4'
     }
 
     repositories {
@@ -26,13 +27,15 @@ targetCompatibility = 1.7
 
 repositories {
     mavenCentral()
-	maven { url "https://jitpack.io" }
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
     compile 'com.github.slimaku:kondorcet:v1.0-rc2'
+    compile "org.springframework.boot:spring-boot-starter-security"
+    compile "com.stormpath.spring:stormpath-default-spring-boot-starter:$stormPathVersion"
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
 }
