@@ -1,36 +1,29 @@
 package balotenko
 
 import balotenketo.balotaro.Balotaro
-import org.junit.Before
+import balotenketo.balotaro.Version
+import org.junit.Assert.*
 import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.runner.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringRunner
-import org.springframework.test.context.web.WebAppConfiguration
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import org.springframework.web.context.WebApplicationContext
+import org.springframework.boot.test.web.client.*
+import org.springframework.test.context.junit4.*
+
 
 @RunWith(SpringRunner::class)
-@SpringBootTest(classes = arrayOf(Balotaro::class))
-@WebAppConfiguration
+@SpringBootTest(classes = arrayOf(Balotaro::class), webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class BalotaroApplicationTests {
 
     @Autowired
-    lateinit var webApplicationContext: WebApplicationContext
-
-    lateinit var mockMvc: MockMvc
-
-    @Before
-    fun setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build()
-    }
+    lateinit var restTemplate: TestRestTemplate
 
     @Test
-    fun testGetRoot() {
-        mockMvc.perform(get("/")).andExpect(status().isOk)
+    fun exampleTest() {
+        val version = this.restTemplate.getForObject("/version", Version::class.java)
+        assertEquals(Version.major, version.major)
+        assertEquals(Version.minor, version.minor)
+        assertEquals(Version.patch, version.patch)
+        assertEquals(Version.label, version.label)
     }
 }
