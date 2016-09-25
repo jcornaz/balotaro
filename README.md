@@ -3,7 +3,7 @@
 
 Wen service to create poll and vote using the condorcet method.
 
-The server is developed in [Kotlin](https://kotlinlang.org) with [Spring Boot](https://projects.spring.io/spring-boot).
+It is developed in [Kotlin](https://kotlinlang.org) with [Spring Boot](https://projects.spring.io/spring-boot).
 
 ## Run the server
 You need a jdk 8 or newer
@@ -47,4 +47,4 @@ spring.data.mongodb.username= # Login user of the mongo server.
 * Run the mongodb server `mongod`
 * Run balotaro `./gradlew bootRun`
 
-The service will be accessible at http://localhost:8080
+The service will be accessible at [http://localhost:8080](http://localhost:8080)
