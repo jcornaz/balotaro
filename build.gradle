@@ -22,8 +22,8 @@ apply plugin: 'kotlin'
 apply plugin: 'eclipse'
 apply plugin: 'spring-boot'
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -31,10 +31,13 @@ repositories {
 }
 
 dependencies {
-    compile 'org.springframework.boot:spring-boot-starter-web'
     compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
-    compile 'com.github.slimaku:kondorcet:v1.0-rc2'
+
+    compile 'org.springframework.boot:spring-boot-starter-web'
     compile "org.springframework.boot:spring-boot-starter-security"
+    compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+    compile 'com.github.slimaku:kondorcet:v1.0-rc2'
     compile "com.stormpath.spring:stormpath-default-spring-boot-starter:$stormPathVersion"
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
