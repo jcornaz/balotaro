@@ -38,8 +38,6 @@ dependencies {
     compile "com.stormpath.spring:stormpath-default-spring-boot-starter:$stormPathVersion"
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
-    testCompile 'org.springframework.boot:spring-boot-test'
-    testCompile 'org.springframework.boot:spring-boot-test-autoconfigure'
 }
 
 springBoot {
