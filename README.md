@@ -45,6 +45,6 @@ spring.data.mongodb.username= # Login user of the mongo server.
 
 ### Run the server
 * Run the mongodb server `mongod`
-* Run balotaro `./gradlew bootRun`
+* Run spring boot `./gradlew bootRun`
 
 The service will be accessible at [http://localhost:8080](http://localhost:8080)
