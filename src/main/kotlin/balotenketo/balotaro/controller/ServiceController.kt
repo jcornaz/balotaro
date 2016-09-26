@@ -1,5 +1,6 @@
-package balotenketo.balotaro
+package balotenketo.balotaro.controller
 
+import balotenketo.balotaro.Version
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
