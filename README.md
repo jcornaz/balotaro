@@ -1,14 +1,13 @@
 # Balotaro
 [![Build Status](https://travis-ci.org/slimaku/balotaro.svg?branch=master)](https://travis-ci.org/slimaku/balotaro)
+[![GPLv3](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://raw.githubusercontent.com/slimaku/balotaro/master/LICENSE)
 
 Wen service to create poll and vote using the condorcet method.
-
-It is developed in [Kotlin](https://kotlinlang.org) with [Spring Boot](https://projects.spring.io/spring-boot).
 
 ## Run the server
 You need a jdk 8 or newer
 
-### Setup a StormPath authentication
+### Setup the StormPath authentication
 1. Get an API key from [Stormpath](https://stormpath.com)
 2. Save the key in your home directory in the following location:
     * `~/.stormpath/apiKey.properties` on Unix, Linux and Mac OS
@@ -22,12 +21,12 @@ If you have many stormpath applications, add the folowing in the `./src/main/res
 stormpath.application.href = your_application_href_here
 ``` 
 
-[Stormpath with spring source tutorial](https://docs.stormpath.com/java/spring-boot-web/quickstart.html)
+You may also take a look at this [Stormpath with spring source tutorial](https://docs.stormpath.com/java/spring-boot-web/quickstart.html)
 
 ### Setup a MongoDB server
 1. Install a mongodb server
 
-If not on the same machine or not a standard installation add the relevant lines in the `./src/main/resources/application.properties` file :
+If MongoDB is not on the same machine or has not a standard installation add the relevant lines in the `./src/main/resources/application.properties` file :
 ```
 spring.data.mongodb.authentication-database= # Authentication database name.
 spring.data.mongodb.database=test # Database name.
@@ -41,7 +40,7 @@ spring.data.mongodb.uri=mongodb://localhost/test # Mongo database URI. When set,
 spring.data.mongodb.username= # Login user of the mongo server.
 ```
 
-[MongoDB with spring boot tutorial](https://spring.io/guides/gs/accessing-data-mongodb/)
+You may also take a look at this [MongoDB with spring boot tutorial](https://spring.io/guides/gs/accessing-data-mongodb/)
 
 ### Run the server
 * Run the mongodb server `mongod`
