@@ -47,4 +47,5 @@ You may also take a look at this [MongoDB with spring boot tutorial](https://spr
 * Run spring boot `./gradlew bootRun`
 
 The service root endpoint will be : [http://localhost:8080](http://localhost:8080)
+
 The API documentation will be available at `[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
