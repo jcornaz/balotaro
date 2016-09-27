@@ -44,5 +44,5 @@ dependencies {
 }
 
 springBoot {
-    mainClass = 'balotenketo.balotaro.BalotaroKt'
+    mainClass = 'balotenketo.balotaro.ApplicationKt'
 }
