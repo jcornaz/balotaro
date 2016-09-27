@@ -8,14 +8,14 @@ import java.util.*
 data class Poll(
 
         @JsonIgnore
-        val admin: String,
+        val admin: String = "",
 
         val secret: String = TokenGenerator.generate(),
 
         val createdDate: Date = DateTime.now().toDate(),
         val timeToLive: Long = 60 * 24 * 30, // In minutes
 
-        val choices: Map<String, String>
+        val choices: Map<String, String> = emptyMap()
 ) {
 
     @Id

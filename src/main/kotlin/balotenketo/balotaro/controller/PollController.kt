@@ -11,6 +11,7 @@ import balotenketo.balotaro.model.VoteToken
 import com.google.common.base.Preconditions
 import kondorcet.DefaultBallot
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -49,7 +50,11 @@ class PollController {
     }
 
     @RequestMapping("/poll/createTokens/{pollID}/{secret}")
-    fun createTokens(pollID: String, secret: String, count: Int? = null): List<VoteToken> {
+    fun createTokens(
+            @PathVariable pollID: String,
+            @PathVariable secret: String,
+            @RequestParam(required = false) count: Int? = null
+    ): List<VoteToken> {
         val poll = pollRepository.findOne(pollID)
         Preconditions.checkArgument(poll?.secret == secret, "Invalid poll")
 
@@ -57,7 +62,11 @@ class PollController {
     }
 
     @RequestMapping("/poll/vote/{tokenID}/{secret}")
-    fun vote(tokenID: String, secret: String, ballots: Array<String>): Success {
+    fun vote(
+            @PathVariable tokenID: String,
+            @PathVariable secret: String,
+            @RequestParam ballots: Array<String>
+    ): Success {
         val token = tokenRepository.findOne(tokenID)
         Preconditions.checkArgument(token?.secret == secret, "Invalid token")
 
@@ -65,7 +74,9 @@ class PollController {
         Preconditions.checkArgument(!ballot.hasDuplicates(), "This ballot contains duplicates")
         Preconditions.checkArgument(ballot.candidates().all { it in token.poll.choices }, "This ballot contains unknown candidates")
 
+        tokenRepository.delete(token)
         ballotRepository.save(Ballot(token.poll.id, ballot.orderedCandidates))
+
         return Success()
     }
 }
