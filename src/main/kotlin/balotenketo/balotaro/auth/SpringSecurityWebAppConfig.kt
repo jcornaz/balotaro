@@ -11,6 +11,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 open class SpringSecurityWebAppConfig : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity) {
-        http.apply(stormpath()).and().authorizeRequests().antMatchers("/", "/version").permitAll()
+        http.apply(stormpath()).and().authorizeRequests().antMatchers(
+                "/",
+                "/version",
+                "/poll/vote/**"
+        ).permitAll()
     }
 }

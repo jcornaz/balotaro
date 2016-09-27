@@ -38,7 +38,7 @@ open class Balotaro {
             }.build())
 
             select().apply {
-                apis(RequestHandlerSelectors.any())
+                apis(RequestHandlerSelectors.basePackage("balotenketo.balotaro"))
                 paths(PathSelectors.any())
             }.build()
         }
