@@ -37,6 +37,9 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-security"
     compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
+    compile 'io.springfox:springfox-swagger-ui:2.2.2'
+    compile 'io.springfox:springfox-swagger2:2.2.2'
+
     compile 'com.github.slimaku:kondorcet:v1.0-rc2'
     compile "com.stormpath.spring:stormpath-default-spring-boot-starter:$stormPathVersion"
 

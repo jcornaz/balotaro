@@ -47,4 +47,5 @@ spring.data.mongodb.username= # Login user of the mongo server.
 * Run the mongodb server `mongod`
 * Run spring boot `./gradlew bootRun`
 
-The service will be accessible at [http://localhost:8080](http://localhost:8080)
+The service root endpoint will be : [http://localhost:8080](http://localhost:8080)
+The API documentation will be available at `[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
