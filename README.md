@@ -24,7 +24,7 @@ stormpath.application.href = your_application_href_here
 You may also take a look at this [Stormpath with spring source tutorial](https://docs.stormpath.com/java/spring-boot-web/quickstart.html)
 
 ### Setup a MongoDB server
-1. Install a mongodb server
+Install a mongodb server.
 
 If MongoDB is not on the same machine or has not a standard installation add the relevant lines in the `./src/main/resources/application.properties` file :
 ```
