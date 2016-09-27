@@ -4,6 +4,7 @@ import balotenketo.balotaro.Version
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
+@Suppress("unused")
 @RestController
 class ServiceController {
 
