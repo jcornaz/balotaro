@@ -49,14 +49,14 @@ class PollController {
         }
     }
 
-    @RequestMapping("/poll/createTokens/{pollID}/{secret}")
+    @RequestMapping("/poll/createTokens/{pollID}")
     fun createTokens(
             @PathVariable pollID: String,
-            @PathVariable secret: String,
-            @RequestParam(required = false) count: Int? = null
+            @RequestParam(required = false) count: Int? = null,
+            request: HttpServletRequest
     ): List<VoteToken> {
         val poll = pollRepository.findOne(pollID)
-        Preconditions.checkArgument(poll?.secret == secret, "Invalid poll")
+        Preconditions.checkArgument(poll?.admin == StormPath.getRequiredAccount(request).href, "Invalid poll")
 
         return (1..(count ?: 10)).map { VoteToken(poll).apply { tokenRepository.save(this) } }
     }
@@ -65,17 +65,20 @@ class PollController {
     fun vote(
             @PathVariable tokenID: String,
             @PathVariable secret: String,
-            @RequestParam ballots: Array<String>
+            @RequestParam ballot: Array<String>
     ): Success {
         val token = tokenRepository.findOne(tokenID)
         Preconditions.checkArgument(token?.secret == secret, "Invalid token")
 
-        val ballot = DefaultBallot(ballots.map { it.split("|").toSet() })
-        Preconditions.checkArgument(!ballot.hasDuplicates(), "This ballot contains duplicates")
-        Preconditions.checkArgument(ballot.candidates().all { it in token.poll.choices }, "This ballot contains unknown candidates")
+        val candidates = DefaultBallot(ballot.map { it.split("|").toSet() }).let {
+            Preconditions.checkArgument(!it.hasDuplicates(), "This ballot contains duplicates")
+            Preconditions.checkArgument(it.candidates().all { it in token.poll.choices }, "This ballot contains unknown candidates")
+
+            it.orderedCandidates
+        }
 
         tokenRepository.delete(token)
-        ballotRepository.save(Ballot(token.poll.id, ballot.orderedCandidates))
+        ballotRepository.save(Ballot(token.poll.id, candidates))
 
         return Success()
     }
