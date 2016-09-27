@@ -1,5 +1,6 @@
 package balotenketo.balotaro.controller
 
+import balotenketo.balotaro.Balotaro
 import balotenketo.balotaro.Version
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -10,8 +11,8 @@ class ServiceController {
 
     @RequestMapping("/")
     fun getService() = object {
-        val service = "Balotaro"
-        val description = "Vote web service using the condorcet method"
+        val service = Balotaro.title
+        val description = Balotaro.description
         val version = Version.toString()
     }
 
