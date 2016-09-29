@@ -14,7 +14,8 @@ open class SpringSecurityWebAppConfig : WebSecurityConfigurerAdapter() {
         http.apply(stormpath()).and().authorizeRequests().antMatchers(
                 "/",
                 "/version",
-                "/poll/vote/**"
+                "/register",
+                "/vote/**"
         ).permitAll()
     }
 }
