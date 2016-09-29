@@ -48,10 +48,8 @@ You may also take a look at this [MongoDB with spring boot tutorial](https://spr
 
 The service root endpoint will be : [http://localhost:8080](http://localhost:8080)
 
-The API documentation will be available at `[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-
 ### Use it
-For a production use make sure to use **only** https.
+When running, you can find the API documentation at [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
 #### Register
 To create and manage poll you need an account. You can create one at [http://localhost:8080/register](http://localhost:8080/register)
@@ -74,4 +72,48 @@ curl -X POST -d 'grant_type=password&username=ACCOUNT_USERNAME&password=ACCOUNT_
 curl -X POST -H "Authorization: Bearer eyJhbGciOiJJhbGciOiJIUzI1NiJ9..." http://localhost:8080/
 ```
 
-[More informations](http://docs.stormpath.com/java/spring-boot-web/http-request-authentication.html)
+**Important note** : For a production use, make sure to use **only** https.
+
+[More informations about authentication with Stormpath and Spring boot](http://docs.stormpath.com/java/spring-boot-web/http-request-authentication.html) 
+
+#### Create a poll
+Hit `/poll/create` with at least some *choices* as argument :
+```bash
+curl -u LOGIN:PASSWORD -d "{ 'choices': ['lundo', 'mardo', 'merkredo', 'ĵaŭdo', 'vendredo'], 'tokenCount': 3 }" http://localhost:8080/poll/create
+```
+
+It would return the poll id and tokens :
+```json
+{
+	"poll": {
+		"id": "57ed744820337a09b8f47464",
+		"createdDate": 1475179592293,
+		"timeToLive": 43200,
+		"choices": ["lundo", "mardo", "merkredo", "ĵaŭdo", "vendredo"]
+	},
+	
+	"tokens": [
+		{ "id": "57ed744820337a09b8f47465", "secret": "fqnsvbnjjdanocgcl26jjcurnq" },
+		{ "id": "57ed744820337a09b8f47466", "secret": "h7misrbkqlq7vc7k1cq3pp774g" },
+		{ "id": "57ed744820337a09b8f47467", "secret": "reji7pn2ar8ahlfuj2og1p8v4h" }
+	]
+}
+```
+
+#### The vote tokens
+Tokens have two part (*id* and *secret*) and are needed to vote. They are specific fore the poll and cannot be used of an another. Each token allow to make exactly one vote (not more).
+
+You can create more tokens for an existing poll with `/poll/generateTokens` :
+```bash
+curl -u LOGIN:PASSWORD -d "{ tokenCount: 10 }" http://localhost:8080/poll/generateTokens
+```
+
+#### Vote
+Hit `/vote` with an unused token and your ballot (choices ordered by preferences) :
+```bash
+curl -u LOGIN:PASSWORD -d "{ tokenID: <my_token_id>, tokenSecret: <my_token_secret>, ballot: ['mardo', 'merkredo', 'vendredo'] }" http://localhost:8080/vote
+```
+
+##### Notes
+* You can specify status quo between candidates.
+* You can omit candidates. (They will be considerated as equally undesired result)
