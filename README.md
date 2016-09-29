@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/slimaku/balotaro.svg?branch=master)](https://travis-ci.org/slimaku/balotaro)
 [![GPLv3](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://raw.githubusercontent.com/slimaku/balotaro/master/LICENSE)
 
-Wen service to create poll and vote using the condorcet method.
+RESFull Web service to create to vote on any subject using the condorcet method.
 
 ## Run the server
 You need a jdk 8 or newer
@@ -19,9 +19,9 @@ You need a jdk 8 or newer
 If you have many stormpath applications, add the folowing in the `./src/main/resources/application.properties` file :
 ```
 stormpath.application.href = your_application_href_here
-``` 
+```
 
-You may also take a look at this [Stormpath with spring source tutorial](https://docs.stormpath.com/java/spring-boot-web/quickstart.html)
+You may also take a look at the [Stormpath starter documentation for spring boot](https://docs.stormpath.com/java/spring-boot-web)
 
 ### Setup a MongoDB server
 Install a mongodb server.
@@ -49,3 +49,29 @@ You may also take a look at this [MongoDB with spring boot tutorial](https://spr
 The service root endpoint will be : [http://localhost:8080](http://localhost:8080)
 
 The API documentation will be available at `[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
+### Use it
+For a production use make sure to use **only** https.
+
+#### Register
+To create and manage poll you need an account. You can create one at [http://localhost:8080/register](http://localhost:8080/register)
+
+#### Authentication
+Some requests need an authentication
+
+You can use Basic authentication. Example :
+```bash
+curl -u LOGIN:PASSWORD http://localhost:8080/
+```
+
+Or you can get beared token at `/oauth/token`. Example :
+```bash
+# Get a token
+curl -X POST -d 'grant_type=password&username=ACCOUNT_USERNAME&password=ACCOUNT_PASSWORD' http://localhost:8080/oauth/token
+# Will return something like : { "expires_in": 3600, "token_type": "Bearer", "access_token": "eyJhbGciOiJJhbGciOiJIUzI1NiJ9.eyJqdGkiOi..." }
+
+# Use the token
+curl -X POST -H "Authorization: Bearer eyJhbGciOiJJhbGciOiJIUzI1NiJ9..." http://localhost:8080/
+```
+
+[More informations](http://docs.stormpath.com/java/spring-boot-web/http-request-authentication.html)
