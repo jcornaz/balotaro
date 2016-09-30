@@ -9,4 +9,5 @@ class Ballot(
 
     @Id
     lateinit var id: String
+        private set
 }

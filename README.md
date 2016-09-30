@@ -4,26 +4,10 @@
 
 RESFull Web service to create to vote on any subject using the condorcet method.
 
-## Run the server
+## Setup
 You need a jdk 8 or newer
 
-### Setup the StormPath authentication
-1. Get an API key from [Stormpath](https://stormpath.com)
-2. Save the key in your home directory in the following location:
-    * `~/.stormpath/apiKey.properties` on Unix, Linux and Mac OS
-    * `C:\Users\YOUR_USERNAME\.stormpath\apiKey.properties` on Windows
-3. Change the file permissions to ensure only you can read this file and not accidentally write or modify it. For example:
-    * `chmod go-rwx ~/.stormpath/apiKey.properties`
-    * `chmod u-w ~/.stormpath/apiKey.properties`
-
-If you have many stormpath applications, add the folowing in the `./src/main/resources/application.properties` file :
-```
-stormpath.application.href = your_application_href_here
-```
-
-You may also take a look at the [Stormpath starter documentation for spring boot](https://docs.stormpath.com/java/spring-boot-web)
-
-### Setup a MongoDB server
+### MongoDB
 Install a mongodb server.
 
 If MongoDB is not on the same machine or has not a standard installation add the relevant lines in the `./src/main/resources/application.properties` file :
@@ -42,8 +26,9 @@ spring.data.mongodb.username= # Login user of the mongo server.
 
 You may also take a look at this [MongoDB with spring boot tutorial](https://spring.io/guides/gs/accessing-data-mongodb/)
 
-### Run the server
-* Run the mongodb server `mongod`
+Run it : `mongod`
+
+### Launch the web service
 * Run spring boot `./gradlew bootRun`
 
 The service root endpoint will be : [http://localhost:8080](http://localhost:8080)

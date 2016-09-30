@@ -3,7 +3,7 @@ package balotenketo.balotaro.model
 import java.math.BigInteger
 import java.security.SecureRandom
 
-object TokenGenerator {
+object SecretGenerator {
 
     val rng by lazy { SecureRandom() }
 

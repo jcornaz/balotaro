@@ -29,9 +29,9 @@ class VoteController {
                     "\nThe character '|' can be used in the choices to specify status quo.\n" +
                     "Exemple : a,b|c,d.\n" +
                     "\nCandidates can be omitted.")
-    @RequestMapping("/vote/{tokenID}/{secret}",
+    @RequestMapping("/vote/{tokenID}",
             method = arrayOf(RequestMethod.POST),
-            consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE),
+            consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE),
             produces = arrayOf(MediaType.APPLICATION_JSON_VALUE))
     fun vote(
             @ApiParam("Token ID", required = true)
@@ -39,7 +39,7 @@ class VoteController {
             tokenID: String,
 
             @ApiParam("Token secret", required = true)
-            @PathVariable
+            @RequestParam
             secret: String,
 
             @ApiParam("Candidates ordered by preference", required = false)

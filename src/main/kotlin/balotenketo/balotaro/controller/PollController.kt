@@ -1,8 +1,8 @@
 package balotenketo.balotaro.controller
 
+import balotenketo.balotaro.Configuration
 import balotenketo.balotaro.PollRepository
 import balotenketo.balotaro.VoteTokenRepository
-import balotenketo.balotaro.auth.StormPath
 import balotenketo.balotaro.model.Poll
 import balotenketo.balotaro.model.VoteToken
 import com.google.common.base.Preconditions
@@ -28,33 +28,32 @@ class PollController {
             authorizations = arrayOf(Authorization("OAuth2")))
     @RequestMapping("/poll/create",
             method = arrayOf(RequestMethod.POST),
-            consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE),
+            consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE),
             produces = arrayOf(MediaType.APPLICATION_JSON_VALUE))
     fun create(
             @ApiParam("Choices possible for the poll", required = true)
             @RequestParam
             choices: Array<String>,
 
-            @ApiParam("Number of token to generate (10 by default)", required = false)
+            @ApiParam("Number of token to generate", required = false)
             @RequestParam(required = false)
             tokenCount: Int? = null,
 
             request: HttpServletRequest
     ) = let {
-        Preconditions.checkArgument(choices.isNotEmpty())
-        Preconditions.checkArgument(choices.none { "|" in it })
+        Preconditions.checkArgument(choices.isNotEmpty(), "You have to specify choices")
 
-        @ApiModel("Result of a poll creation")
+        val ip = request.remoteAddr
+        val pollCount = pollRepository.countByCreatorIP(ip)
+
+        Preconditions.checkArgument(pollCount < Configuration.maxPollCountByIP,
+                "You cannot create more poll from this IP address. You have to close you previous polls first")
+
         object {
-
-            @ApiModelProperty("The created poll")
-            val poll = Poll(
-                    admin = StormPath.getRequiredAccount(request).href,
-                    choices = choices.toSet()
-            ).apply { pollRepository.save(this) }
+            val poll = Poll(ip, choices = choices.toSet()).apply { pollRepository.save(this) }
 
             @ApiModelProperty("Generated tokens")
-            val tokens = (1..(tokenCount ?: 10)).map {
+            val tokens = (1..Configuration.tokenCount(tokenCount)).map {
                 VoteToken(poll).apply { tokenRepository.save(this) }
             }
         }
@@ -65,12 +64,16 @@ class PollController {
             authorizations = arrayOf(Authorization("OAuth2")))
     @RequestMapping("/poll/createTokens/{pollID}",
             method = arrayOf(RequestMethod.POST),
-            consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE),
+            consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE),
             produces = arrayOf(MediaType.APPLICATION_JSON_VALUE))
     fun createTokens(
             @ApiParam("Poll ID for which create tokens", required = true)
             @PathVariable
             pollID: String,
+
+            @ApiParam("Poll secret")
+            @RequestParam
+            pollSecret: String,
 
             @ApiParam("Number of token to generate (10 by default)", required = false)
             @RequestParam(required = false)
@@ -79,9 +82,12 @@ class PollController {
             request: HttpServletRequest
     ): List<VoteToken> {
         val poll = pollRepository.findOne(pollID)
-        Preconditions.checkArgument(poll?.admin == StormPath.getRequiredAccount(request).href, "Invalid poll")
+        Preconditions.checkArgument(poll?.secrect == pollSecret, "Invalid pollID or secret")
 
-        return (1..(count ?: 10)).map { VoteToken(poll).apply { tokenRepository.save(this) } }
+        val currentCount = tokenRepository.countByPoll(poll)
+        val toCreate = Math.max(0, Math.min(Configuration.maxTokenCount, currentCount + Configuration.tokenCount(count)) - currentCount)
+
+        return (1..toCreate).map { VoteToken(poll).apply { tokenRepository.save(this) } }
     }
 
 }
