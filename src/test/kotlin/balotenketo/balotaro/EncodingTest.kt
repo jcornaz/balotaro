@@ -18,9 +18,20 @@ class EncodingTest {
         val encoded = (id to secret).encode()
         val (decodedID, decodedSecret) = encoded.decode()
 
-        println("$id vs $decodedID")
-        println("$secret vs $decodedSecret")
-        
+        assertEquals(id, decodedID)
+        assertEquals(secret, decodedSecret)
+    }
+
+    @Test
+    fun encodeDecodeZeros() {
+        val id = "0"
+        val secret = BigInteger("0", 2)
+
+        val encoded = encode(id, secret)
+        println(encoded)
+
+        val (decodedID, decodedSecret) = encoded.decode()
+
         assertEquals(id, decodedID)
         assertEquals(secret, decodedSecret)
     }

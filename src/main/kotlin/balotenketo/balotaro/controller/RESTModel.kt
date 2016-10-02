@@ -11,9 +11,10 @@ fun String.decode(): Pair<String, BigInteger> =
         }
 
 fun Pair<String, BigInteger>.encode(): String =
-        (BigInteger(first, 16).toByteArray() + second.toByteArray()).let {
-            Base64Utils.encodeToUrlSafeString(it)
-        }
+        BigInteger(first, 16).toByteArray().let {
+            ByteArray(12 - it.size) + it + second.toByteArray()
+        }.let { Base64Utils.encodeToUrlSafeString(it) }
+
 
 fun encode(id: String, secret: BigInteger): String = (id to secret).encode()
 
