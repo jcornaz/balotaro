@@ -1,6 +1,7 @@
 package balotenketo.balotaro.model
 
 import org.springframework.data.annotation.Id
+import org.springframework.data.annotation.Version
 import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.repository.MongoRepository
 
@@ -20,6 +21,9 @@ class VoteToken(poll: Poll? = null) {
     val secret = SecretGenerator.generate()
 
     var used = false
+
+    @Version
+    val version: Long = 0
 
     init {
         if (poll != null) {
