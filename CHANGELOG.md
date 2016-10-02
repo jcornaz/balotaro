@@ -3,7 +3,7 @@
 ### Added
 * `/` return the app name, description and version
 * `/version` return the version of the web service
-* `/poll/create?choices={choices}` Create a new poll (authenticated users only)
-* `/poll/createTokens/{pollID}?count={count}` Create new tokens for a poll (Authenticated admin of the poll only)
-* `/poll/vote/{tokenID}/{secret}?ballot={ballot}` Submit a ballot and consume the vote-token
-* Swagger to document the API (UI at `/swagger-ui.html`)
+* `/poll/create` Create a new poll
+* `/poll/createTokens` Create new tokens for a poll
+* `/poll/vote` Submit a ballot and consume the vote-token
+* API documentation with Swagger (UI at `/swagger-ui.html`)
