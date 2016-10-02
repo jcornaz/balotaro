@@ -9,6 +9,5 @@ object SecretGenerator {
 
     val rng by lazy { SecureRandom() }
 
-    fun generate(entropy: Int = defaultEntropy): BigInteger =
-            BigInteger(entropy, rng)
+    fun generate(entropy: Int = defaultEntropy): BigInteger = BigInteger(entropy, rng)
 }

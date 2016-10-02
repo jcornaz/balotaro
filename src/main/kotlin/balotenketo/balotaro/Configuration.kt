@@ -6,6 +6,6 @@ object Configuration {
     val defaultTokenCount = 10
     val maxTokenCountByPoll = 1000
 
-    fun tokensToCreate(currentCount: Int = 0, requestCount: Int? = null) =
-            Math.max(0, Math.min(maxTokenCountByPoll, currentCount + (requestCount ?: defaultTokenCount)) - currentCount)
+    fun tokensToCreate(currentCount: Int = 0, requestCount: Int = defaultTokenCount) =
+            Math.max(0, Math.min(maxTokenCountByPoll, currentCount + requestCount) - currentCount)
 }

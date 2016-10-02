@@ -1,5 +1,6 @@
 package balotenketo.balotaro.controller
 
+import balotenketo.balotaro.Configuration
 import io.swagger.annotations.ApiModel
 import io.swagger.annotations.ApiModelProperty
 import org.springframework.util.Base64Utils
@@ -18,8 +19,17 @@ fun Pair<String, BigInteger>.encode(): String =
 
 fun encode(id: String, secret: BigInteger): String = (id to secret).encode()
 
-open class Success(val success: Boolean = true)
-open class Failure(val message: String) : Success(false)
+@ApiModel("Success of the operation")
+open class Success(
+        @ApiModelProperty("True if the operation asked was a success. False otherwise")
+        val success: Boolean = true
+)
+
+@ApiModel("Failure of the operation")
+open class Failure(
+        @ApiModelProperty("Why the operation didn't succeed")
+        val message: String
+) : Success(false)
 
 @ApiModel("Poll creation argument")
 data class PollCreationArgument(
@@ -28,7 +38,7 @@ data class PollCreationArgument(
         val choices: Set<String> = emptySet(),
 
         @ApiModelProperty("Number of token to generate (10 by default)", required = false)
-        val tokenCount: Int = 10
+        val tokenCount: Int = Configuration.defaultTokenCount
 )
 
 @ApiModel("Poll creation result")
@@ -47,7 +57,7 @@ data class TokenCreationArgument(
         val poll: String? = null,
 
         @ApiModelProperty("Number of token to generate (10 by default)", required = false)
-        val tokenCount: Int? = null
+        val tokenCount: Int = Configuration.defaultTokenCount
 )
 
 @ApiModel("Ballot submission")

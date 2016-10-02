@@ -48,3 +48,10 @@ dependencies {
 springBoot {
     mainClass = 'balotenketo.balotaro.ApplicationKt'
 }
+
+test {
+    testLogging {
+        events "failed"
+        exceptionFormat "full"
+    }
+}
