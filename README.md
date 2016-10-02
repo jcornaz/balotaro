@@ -2,28 +2,12 @@
 [![Build Status](https://travis-ci.org/slimaku/balotaro.svg?branch=master)](https://travis-ci.org/slimaku/balotaro)
 [![GPLv3](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://raw.githubusercontent.com/slimaku/balotaro/master/LICENSE)
 
-Wen service to create poll and vote using the condorcet method.
+RESFull Web service to create to vote on any subject using the condorcet method.
 
-## Run the server
+## Setup
 You need a jdk 8 or newer
 
-### Setup the StormPath authentication
-1. Get an API key from [Stormpath](https://stormpath.com)
-2. Save the key in your home directory in the following location:
-    * `~/.stormpath/apiKey.properties` on Unix, Linux and Mac OS
-    * `C:\Users\YOUR_USERNAME\.stormpath\apiKey.properties` on Windows
-3. Change the file permissions to ensure only you can read this file and not accidentally write or modify it. For example:
-    * `chmod go-rwx ~/.stormpath/apiKey.properties`
-    * `chmod u-w ~/.stormpath/apiKey.properties`
-
-If you have many stormpath applications, add the folowing in the `./src/main/resources/application.properties` file :
-```
-stormpath.application.href = your_application_href_here
-``` 
-
-You may also take a look at this [Stormpath with spring source tutorial](https://docs.stormpath.com/java/spring-boot-web/quickstart.html)
-
-### Setup a MongoDB server
+### MongoDB
 Install a mongodb server.
 
 If MongoDB is not on the same machine or has not a standard installation add the relevant lines in the `./src/main/resources/application.properties` file :
@@ -42,10 +26,68 @@ spring.data.mongodb.username= # Login user of the mongo server.
 
 You may also take a look at this [MongoDB with spring boot tutorial](https://spring.io/guides/gs/accessing-data-mongodb/)
 
-### Run the server
-* Run the mongodb server `mongod`
-* Run spring boot `./gradlew bootRun`
+Run it : `mongod`
+
+### Launch the web service
+Run it with gradle : `./gradlew bootRun`
 
 The service root endpoint will be : [http://localhost:8080](http://localhost:8080)
 
-The API documentation will be available at `[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+### Use it
+When running, you can find a complete API documentation at [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
+All requests require and produces JSON.
+
+#### Create a poll
+Hit `/poll/create` with at least some *choices* as argument :
+```bash
+curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d "{ \"choices\": [\"lundo\", \"mardo\", \"merkredo\", \"ĵaŭdo\", \"vendredo\" } }" "http://localhost:8080/poll/create"
+```
+
+I would return this kind of JSON : 
+```json
+{
+  "poll": "V_EaDe3BMA6I5E2MZG1wOExHwoAnGjuVzfmUvg==",
+  "tokens": [
+    "V_EaDe3BMA6I5E2NYuSIfPZ992g3xRgAGmqqkQ==",
+    "V_EaDe3BMA6I5E2OAIhdj0iwUKKO5UXyhHfHai8=",
+    "V_EaDe3BMA6I5E2PaXDBP4wwXyRW8UWFpcPxtw==",
+    ...
+  ]
+}
+```
+
+A client (identified by IP address) cannot create more than 10 poll by day.
+
+#### The vote tokens
+Tokens are needed to vote. They are specific fore the poll and cannot be used of an another. Each token allow to make exactly one vote (not more).
+
+You can create more tokens for an existing poll with `/poll/createTokens` using the poll id and secret returned by `/poll/create` :
+```bash
+curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d "{ \"poll\": "V_EaDe3BMA6I5E2MZG1wOExHwoAnGjuVzfmUvg==" }" "http://localhost:8080/poll/createTokens"
+```
+
+It will return a list of token like that :
+```json
+[
+  "V_EcGO3BMBSM2y9PAJiQehuGoMNM70d9nURDdaM=",
+  "V_EcGO3BMBSM2y9QORlCHeipCkclf86EEw3MeA==",
+  "V_EcGO3BMBSM2y9RP2bBdrs2nszGSn8I-CtVnw=="
+]
+```
+
+There is a limit of 1000 tokens by poll
+
+#### Vote
+Hit `/vote` with an unused token and your ballot (choices ordered by preferences) :
+```bash
+curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d "{ \"candidates\": [[\"mardo\"], [\"lundo\", \"ĵaŭdo\"], [\"vendredo\"]], \"token\": \"V_EcGO3BMBSM2y9RP2bBdrs2nszGSn8I-CtVnw==\" }" "http://localhost:8080/vote/"
+```
+
+Note that `candidates` is list of list ordered from the most preferred candidates to the least preferred.
+You can omit candidates. (They will be considerated as equally not preferred)
+
+##### Exemples of lists :
+* `[[A], [B], [C]]` :  **A** is preferred to **B** which is preferred to **C**
+* `[[A, B], [C]]` : **A** and **B** are equally preferred, but both are preferred to **C**
+* `[[A]]` : **A** Is the preferred. **B** and **C** are equally no preferred (omitted)

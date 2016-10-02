@@ -1,0 +1,10 @@
+stormpath:
+  web:
+    register:
+      form:
+        fields:
+          givenName:
+            required = false
+
+          surname:
+            required = false

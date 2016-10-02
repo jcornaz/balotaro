@@ -1,17 +1,17 @@
 package balotenketo.balotaro.controller
 
-import balotenketo.balotaro.BallotRepository
-import balotenketo.balotaro.VoteTokenRepository
 import balotenketo.balotaro.model.Ballot
-import balotenketo.balotaro.model.Success
+import balotenketo.balotaro.model.BallotRepository
+import balotenketo.balotaro.model.VoteTokenRepository
 import com.google.common.base.Preconditions
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
-import io.swagger.annotations.ApiParam
-import kondorcet.DefaultBallot
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RestController
 
 @Api("Vote", description = "Voting endpoint")
 @RestController
@@ -24,43 +24,27 @@ class VoteController {
     @Autowired
     lateinit var ballotRepository: BallotRepository
 
-    @ApiOperation("Submit a ballot",
+    @ApiOperation("Submit a argument",
             notes = "This method consume the vote token which will be no longer valid.\n" +
                     "\nThe character '|' can be used in the choices to specify status quo.\n" +
                     "Exemple : a,b|c,d.\n" +
                     "\nCandidates can be omitted.")
-    @RequestMapping("/poll/vote/{tokenID}/{secret}",
+    @RequestMapping("/vote/",
             method = arrayOf(RequestMethod.POST),
-            consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE),
+            consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE),
             produces = arrayOf(MediaType.APPLICATION_JSON_VALUE))
-    fun vote(
-            @ApiParam("Token ID", required = true)
-            @PathVariable
-            tokenID: String,
+    fun vote(@RequestBody argument: BallotArgument): Success {
 
-            @ApiParam("Token secret", required = true)
-            @PathVariable
-            secret: String,
-
-            @ApiParam("Candidates ordered by preference", required = false)
-            @RequestParam(required = false)
-            ballot: Array<String>
-    ): Success {
+        val (tokenID, secret) = argument.token?.decode() ?: throw IllegalArgumentException("No token specified")
         val token = tokenRepository.findOne(tokenID)
-        Preconditions.checkArgument(token?.secret == secret, "Invalid token")
+        Preconditions.checkArgument(!token.used && token?.secret == secret, "Invalid token")
 
-        val candidates = DefaultBallot(ballot.map { it.split("|").toSet() }).let {
-            Preconditions.checkArgument(!it.hasDuplicates(), "This ballot contains duplicates")
-            Preconditions.checkArgument(
-                    it.candidates().all { it in token.poll.choices },
-                    "This ballot contains unknown candidates"
-            )
+        val ballot = Ballot(token.poll, argument.candidates)
+        Preconditions.checkArgument(!ballot.hasDuplicates(), "This ballot contains duplicates")
+        Preconditions.checkArgument(ballot.candidates().all { it in token.poll.choices }, "This ballot contains unknown candidates")
 
-            it.orderedCandidates
-        }
-
-        tokenRepository.delete(token)
-        ballotRepository.save(Ballot(token.poll.id, candidates))
+        tokenRepository.save(token.apply { used = true })
+        ballotRepository.save(ballot)
 
         return Success()
     }
