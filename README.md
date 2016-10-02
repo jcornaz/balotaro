@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/slimaku/balotaro.svg?branch=master)](https://travis-ci.org/slimaku/balotaro)
 [![GPLv3](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://raw.githubusercontent.com/slimaku/balotaro/master/LICENSE)
 
-RESFull Web service to create poll and vote on any subject using the [Condorcet method](https://en.wikipedia.org/wiki/Condorcet_method).
+RESFull Web service to vote on any subject using the [Condorcet method](https://en.wikipedia.org/wiki/Condorcet_method).
 
 ## Setup
 You need a jdk 8 or newer
@@ -11,7 +11,7 @@ You need a jdk 8 or newer
 Install a mongodb server.
 
 If MongoDB is not on the same machine or has not a standard installation add the relevant lines in the `./src/main/resources/application.properties` file :
-```
+```properties
 spring.data.mongodb.authentication-database= # Authentication database name.
 spring.data.mongodb.database=test # Database name.
 spring.data.mongodb.field-naming-strategy= # Fully qualified name of the FieldNamingStrategy to use.
@@ -63,7 +63,7 @@ Tokens are needed to vote. They are specific fore the poll and cannot be used of
 
 You can create more tokens for an existing poll with `/poll/createTokens` using the poll id and secret returned by `/poll/create` :
 ```bash
-curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d "{ \"poll\": "V_EaDe3BMA6I5E2MZG1wOExHwoAnGjuVzfmUvg==" }" "http://localhost:8080/poll/createTokens"
+curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d "{ \"poll\": \"V_EaDe3BMA6I5E2MZG1wOExHwoAnGjuVzfmUvg==\" }" "http://localhost:8080/poll/createTokens"
 ```
 
 It will return a list of token like that :
