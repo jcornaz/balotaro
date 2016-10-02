@@ -11,26 +11,49 @@ import java.util.*
 class EncodingTest {
 
     @Test
-    fun encodeDecode() {
-        val id: String = BigInteger(12 * 8, Random()).toString(16)
-        val secret: BigInteger = SecretGenerator.generate()
+    fun testEncodeDecode() {
+        val rng = Random()
 
-        val encoded = (id to secret).encode()
-        val (decodedID, decodedSecret) = encoded.decode()
+        for (i in (1..5000)) {
+
+            val id = BigInteger(12 * 8, rng).toString(16)
+            val secret = SecretGenerator.generate()
+
+            val (decodedID, decodedSecret) = (id to secret).encode().decode()
+
+            assertEquals(id, decodedID)
+            assertEquals(secret, decodedSecret)
+        }
+    }
+
+    @Test
+    fun testEncodeDecodeZero() {
+        val id = "0"
+        val secret = BigInteger("0")
+
+        val (decodedID, decodedSecret) = (id to secret).encode().decode()
 
         assertEquals(id, decodedID)
         assertEquals(secret, decodedSecret)
     }
 
     @Test
-    fun encodeDecodeZeros() {
-        val id = "0"
-        val secret = BigInteger("0", 2)
+    fun testEncodeDecodeMinByteValue() {
+        val id = ByteArray(12) { Byte.MIN_VALUE }.let(::BigInteger).toString(16)
+        val secret = ByteArray(128 / 8) { Byte.MIN_VALUE }.let(::BigInteger)
 
-        val encoded = encode(id, secret)
-        println(encoded)
+        val (decodedID, decodedSecret) = (id to secret).encode().decode()
 
-        val (decodedID, decodedSecret) = encoded.decode()
+        assertEquals(id, decodedID)
+        assertEquals(secret, decodedSecret)
+    }
+
+    @Test
+    fun testEncodeDecodeMaxByteValue() {
+        val id = ByteArray(12) { Byte.MAX_VALUE }.let(::BigInteger).toString(16)
+        val secret = ByteArray(128 / 8) { Byte.MAX_VALUE }.let(::BigInteger)
+
+        val (decodedID, decodedSecret) = (id to secret).encode().decode()
 
         assertEquals(id, decodedID)
         assertEquals(secret, decodedSecret)

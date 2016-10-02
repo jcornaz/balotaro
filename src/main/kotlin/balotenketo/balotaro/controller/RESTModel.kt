@@ -8,14 +8,14 @@ import java.math.BigInteger
 
 fun String.decode(): Pair<String, BigInteger> =
         Base64Utils.decodeFromUrlSafeString(this).let {
-            BigInteger(it.copyOfRange(0, 12)).toString(16) to BigInteger(it.copyOfRange(12, it.size))
+            val idSize = it.first().toInt()
+            BigInteger(it.copyOfRange(1, idSize + 1)).toString(16) to BigInteger(it.copyOfRange(idSize + 1, it.size))
         }
 
 fun Pair<String, BigInteger>.encode(): String =
-        BigInteger(first, 16).toByteArray().let {
-            ByteArray(12 - it.size) + it + second.toByteArray()
-        }.let { Base64Utils.encodeToUrlSafeString(it) }
-
+        BigInteger(first, 16).toByteArray().let { array ->
+            ByteArray(1) { array.size.toByte() } + array + second.toByteArray()
+        }.let(Base64Utils::encodeToUrlSafeString)
 
 fun encode(id: String, secret: BigInteger): String = (id to secret).encode()
 
