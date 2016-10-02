@@ -18,6 +18,9 @@ class EncodingTest {
         val encoded = (id to secret).encode()
         val (decodedID, decodedSecret) = encoded.decode()
 
+        println("$id vs $decodedID")
+        println("$secret vs $decodedSecret")
+        
         assertEquals(id, decodedID)
         assertEquals(secret, decodedSecret)
     }

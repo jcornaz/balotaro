@@ -36,6 +36,8 @@ The service root endpoint will be : [http://localhost:8080](http://localhost:808
 ### Use it
 When running, you can find a complete API documentation at [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
+All requests require and produces JSON.
+
 #### Create a poll
 Hit `/poll/create` with at least some *choices* as argument :
 ```bash
@@ -55,7 +57,7 @@ I would return this kind of JSON :
 }
 ```
 
-A client (identified by it IP) cannot create more than 10 poll by day.
+A client (identified by IP address) cannot create more than 10 poll by day.
 
 #### The vote tokens
 Tokens are needed to vote. They are specific fore the poll and cannot be used of an another. Each token allow to make exactly one vote (not more).
@@ -82,12 +84,10 @@ Hit `/vote` with an unused token and your ballot (choices ordered by preferences
 curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d "{ \"candidates\": [[\"mardo\"], [\"lundo\", \"ĵaŭdo\"], [\"vendredo\"]], \"token\": \"V_EcGO3BMBSM2y9RP2bBdrs2nszGSn8I-CtVnw==\" }" "http://localhost:8080/vote/"
 ```
 
-Note the candidates are a list of list.
-The top level list is ordered from the most preferred candidates to the least preferred.
+Note that `candidates` is list of list ordered from the most preferred candidates to the least preferred.
+You can omit candidates. (They will be considerated as equally not preferred)
 
-You can omit candidates. (They will be considerated as equally undesired result)
-
-Exemples of lists :
+##### Exemples of lists :
 * `[[A], [B], [C]]` :  **A** is preferred to **B** which is preferred to **C**
 * `[[A, B], [C]]` : **A** and **B** are equally preferred, but both are preferred to **C**
 * `[[A]]` : **A** Is the preferred. **B** and **C** are equally no preferred (omitted)
