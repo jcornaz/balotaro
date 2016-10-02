@@ -51,8 +51,7 @@ I would return this kind of JSON :
   "tokens": [
     "V_EaDe3BMA6I5E2NYuSIfPZ992g3xRgAGmqqkQ==",
     "V_EaDe3BMA6I5E2OAIhdj0iwUKKO5UXyhHfHai8=",
-    "V_EaDe3BMA6I5E2PaXDBP4wwXyRW8UWFpcPxtw==",
-    ...
+    "V_EaDe3BMA6I5E2PaXDBP4wwXyRW8UWFpcPxtw=="
   ]
 }
 ```
