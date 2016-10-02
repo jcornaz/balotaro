@@ -5,7 +5,10 @@ import java.security.SecureRandom
 
 object SecretGenerator {
 
+    val defaultEntropy = 128
+
     val rng by lazy { SecureRandom() }
 
-    fun generate(): String = BigInteger(130, rng).toString(32)
+    fun generate(entropy: Int = defaultEntropy): BigInteger =
+            BigInteger(entropy, rng)
 }

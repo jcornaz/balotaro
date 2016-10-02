@@ -27,7 +27,7 @@ open class Balotaro {
     open fun api(): Docket {
         return Docket(DocumentationType.SWAGGER_2).apply {
             groupName(groupName)
-            
+
             apiInfo(ApiInfoBuilder().apply {
                 title(title)
                 description(description)

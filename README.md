@@ -29,76 +29,65 @@ You may also take a look at this [MongoDB with spring boot tutorial](https://spr
 Run it : `mongod`
 
 ### Launch the web service
-* Run spring boot `./gradlew bootRun`
+Run it with gradle : `./gradlew bootRun`
 
 The service root endpoint will be : [http://localhost:8080](http://localhost:8080)
 
 ### Use it
-When running, you can find the API documentation at [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-
-#### Register
-To create and manage poll you need an account. You can create one at [http://localhost:8080/register](http://localhost:8080/register)
-
-#### Authentication
-Some requests need an authentication
-
-You can use Basic authentication. Example :
-```bash
-curl -u LOGIN:PASSWORD http://localhost:8080/
-```
-
-Or you can get beared token at `/oauth/token`. Example :
-```bash
-# Get a token
-curl -X POST -d 'grant_type=password&username=ACCOUNT_USERNAME&password=ACCOUNT_PASSWORD' http://localhost:8080/oauth/token
-# Will return something like : { "expires_in": 3600, "token_type": "Bearer", "access_token": "eyJhbGciOiJJhbGciOiJIUzI1NiJ9.eyJqdGkiOi..." }
-
-# Use the token
-curl -X POST -H "Authorization: Bearer eyJhbGciOiJJhbGciOiJIUzI1NiJ9..." http://localhost:8080/
-```
-
-**Important note** : For a production use, make sure to use **only** https.
-
-[More informations about authentication with Stormpath and Spring boot](http://docs.stormpath.com/java/spring-boot-web/http-request-authentication.html) 
+When running, you can find a complete API documentation at [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
 #### Create a poll
 Hit `/poll/create` with at least some *choices* as argument :
 ```bash
-curl -u LOGIN:PASSWORD -d "{ 'choices': ['lundo', 'mardo', 'merkredo', 'ĵaŭdo', 'vendredo'], 'tokenCount': 3 }" http://localhost:8080/poll/create
+curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d "{ \"choices\": [\"lundo\", \"mardo\", \"merkredo\", \"ĵaŭdo\", \"vendredo\" } }" "http://localhost:8080/poll/create"
 ```
 
-It would return the poll id and tokens :
+I would return this kind of JSON : 
 ```json
 {
-	"poll": {
-		"id": "57ed744820337a09b8f47464",
-		"createdDate": 1475179592293,
-		"timeToLive": 43200,
-		"choices": ["lundo", "mardo", "merkredo", "ĵaŭdo", "vendredo"]
-	},
-	
-	"tokens": [
-		{ "id": "57ed744820337a09b8f47465", "secret": "fqnsvbnjjdanocgcl26jjcurnq" },
-		{ "id": "57ed744820337a09b8f47466", "secret": "h7misrbkqlq7vc7k1cq3pp774g" },
-		{ "id": "57ed744820337a09b8f47467", "secret": "reji7pn2ar8ahlfuj2og1p8v4h" }
-	]
+  "poll": "V_EaDe3BMA6I5E2MZG1wOExHwoAnGjuVzfmUvg==",
+  "tokens": [
+    "V_EaDe3BMA6I5E2NYuSIfPZ992g3xRgAGmqqkQ==",
+    "V_EaDe3BMA6I5E2OAIhdj0iwUKKO5UXyhHfHai8=",
+    "V_EaDe3BMA6I5E2PaXDBP4wwXyRW8UWFpcPxtw==",
+    ...
+  ]
 }
 ```
 
-#### The vote tokens
-Tokens have two part (*id* and *secret*) and are needed to vote. They are specific fore the poll and cannot be used of an another. Each token allow to make exactly one vote (not more).
+A client (identified by it IP) cannot create more than 10 poll by day.
 
-You can create more tokens for an existing poll with `/poll/generateTokens` :
+#### The vote tokens
+Tokens are needed to vote. They are specific fore the poll and cannot be used of an another. Each token allow to make exactly one vote (not more).
+
+You can create more tokens for an existing poll with `/poll/createTokens` using the poll id and secret returned by `/poll/create` :
 ```bash
-curl -u LOGIN:PASSWORD -d "{ tokenCount: 10 }" http://localhost:8080/poll/generateTokens
+curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d "{ \"poll\": "V_EaDe3BMA6I5E2MZG1wOExHwoAnGjuVzfmUvg==" }" "http://localhost:8080/poll/createTokens"
 ```
+
+It will return a list of token like that :
+```json
+[
+  "V_EcGO3BMBSM2y9PAJiQehuGoMNM70d9nURDdaM=",
+  "V_EcGO3BMBSM2y9QORlCHeipCkclf86EEw3MeA==",
+  "V_EcGO3BMBSM2y9RP2bBdrs2nszGSn8I-CtVnw=="
+]
+```
+
+There is a limit of 1000 tokens by poll
 
 #### Vote
 Hit `/vote` with an unused token and your ballot (choices ordered by preferences) :
 ```bash
-curl -u LOGIN:PASSWORD -d "{ tokenID: <my_token_id>, tokenSecret: <my_token_secret>, ballot: ['mardo', 'merkredo', 'vendredo'] }" http://localhost:8080/vote
+curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d "{ \"candidates\": [[\"mardo\"], [\"lundo\", \"ĵaŭdo\"], [\"vendredo\"]], \"token\": \"V_EcGO3BMBSM2y9RP2bBdrs2nszGSn8I-CtVnw==\" }" "http://localhost:8080/vote/"
 ```
 
-##### Notes
-* You can specify status quo between candidates.
-* You can omit candidates. (They will be considerated as equally undesired result)
+Note the candidates are a list of list.
+The top level list is ordered from the most preferred candidates to the least preferred.
+
+You can omit candidates. (They will be considerated as equally undesired result)
+
+Exemples of lists :
+* `[[A], [B], [C]]` :  **A** is preferred to **B** which is preferred to **C**
+* `[[A, B], [C]]` : **A** and **B** are equally preferred, but both are preferred to **C**
+* `[[A]]` : **A** Is the preferred. **B** and **C** are equally no preferred (omitted)
