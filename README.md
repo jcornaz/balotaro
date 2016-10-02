@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/slimaku/balotaro.svg?branch=master)](https://travis-ci.org/slimaku/balotaro)
 [![GPLv3](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://raw.githubusercontent.com/slimaku/balotaro/master/LICENSE)
 
-RESFull Web service to create to vote on any subject using the condorcet method.
+RESFull Web service to create poll and vote on any subject using the [Condorcet method](https://en.wikipedia.org/wiki/Condorcet_method).
 
 ## Setup
 You need a jdk 8 or newer
@@ -33,12 +33,12 @@ Run it with gradle : `./gradlew bootRun`
 
 The service root endpoint will be : [http://localhost:8080](http://localhost:8080)
 
-### Use it
+## Use it
 When running, you can find a complete API documentation at [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
 All requests require and produces JSON.
 
-#### Create a poll
+### Create a poll
 Hit `/poll/create` with at least some *choices* as argument :
 ```bash
 curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d "{ \"choices\": [\"lundo\", \"mardo\", \"merkredo\", \"ĵaŭdo\", \"vendredo\" } }" "http://localhost:8080/poll/create"
@@ -58,7 +58,7 @@ I would return this kind of JSON :
 
 A client (identified by IP address) cannot create more than 10 poll by day.
 
-#### The vote tokens
+### The vote tokens
 Tokens are needed to vote. They are specific fore the poll and cannot be used of an another. Each token allow to make exactly one vote (not more).
 
 You can create more tokens for an existing poll with `/poll/createTokens` using the poll id and secret returned by `/poll/create` :
@@ -77,7 +77,7 @@ It will return a list of token like that :
 
 There is a limit of 1000 tokens by poll
 
-#### Vote
+### Vote
 Hit `/vote` with an unused token and your ballot (choices ordered by preferences) :
 ```bash
 curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d "{ \"candidates\": [[\"mardo\"], [\"lundo\", \"ĵaŭdo\"], [\"vendredo\"]], \"token\": \"V_EcGO3BMBSM2y9RP2bBdrs2nszGSn8I-CtVnw==\" }" "http://localhost:8080/vote/"
@@ -86,7 +86,7 @@ curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -
 Note that `candidates` is list of list ordered from the most preferred candidates to the least preferred.
 You can omit candidates. (They will be considerated as equally not preferred)
 
-##### Exemples of lists :
+#### Exemples of lists :
 * `[[A], [B], [C]]` :  **A** is preferred to **B** which is preferred to **C**
 * `[[A, B], [C]]` : **A** and **B** are equally preferred, but both are preferred to **C**
 * `[[A]]` : **A** Is the preferred. **B** and **C** are equally no preferred (omitted)
