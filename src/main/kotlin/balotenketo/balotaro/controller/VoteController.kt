@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package balotenketo.balotaro.controller
 
 import balotenketo.balotaro.model.Ballot
@@ -6,16 +8,16 @@ import balotenketo.balotaro.model.VoteTokenRepository
 import com.google.common.base.Preconditions
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
+import io.swagger.annotations.ApiResponse
+import io.swagger.annotations.ApiResponses
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import javax.servlet.http.HttpServletResponse
 
 @Api("Vote", description = "Voting endpoint")
 @RestController
-@Suppress("unused")
 class VoteController {
 
     @Autowired
@@ -24,20 +26,19 @@ class VoteController {
     @Autowired
     lateinit var ballotRepository: BallotRepository
 
-    @ApiOperation("Submit a argument",
-            notes = "This method consume the vote token which will be no longer valid.\n" +
-                    "\nThe character '|' can be used in the choices to specify status quo.\n" +
-                    "Exemple : a,b|c,d.\n" +
-                    "\nCandidates can be omitted.")
-    @RequestMapping("/vote/",
+    @ApiOperation("Submit a argument", notes = "This method consume the vote token which will be no longer valid.")
+    @ApiResponses(*arrayOf(
+            ApiResponse(code = 201, message = "Ballot successfully submitted"),
+            ApiResponse(code = 400, message = "Token unspecified or invalid list of candidates"),
+            ApiResponse(code = 404, message = "Unknown token")))
+    @RequestMapping("/vote",
             method = arrayOf(RequestMethod.POST),
             consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE),
             produces = arrayOf(MediaType.APPLICATION_JSON_VALUE))
-    fun vote(@RequestBody argument: BallotArgument): Success {
+    @ResponseStatus(HttpStatus.CREATED)
+    fun vote(@RequestBody argument: BallotArgument, response: HttpServletResponse): Success {
 
-        val (tokenID, secret) = argument.token?.decode() ?: throw IllegalArgumentException("No token specified")
-        val token = tokenRepository.findOne(tokenID)
-        Preconditions.checkArgument(!token.used && token?.secret == secret, "Invalid token")
+        val token = tokenRepository[argument.token]
 
         val ballot = Ballot(token.poll, argument.candidates)
         Preconditions.checkArgument(!ballot.hasDuplicates(), "This ballot contains duplicates")
@@ -45,6 +46,8 @@ class VoteController {
 
         tokenRepository.save(token.apply { used = true })
         ballotRepository.save(ballot)
+
+        response.status = HttpStatus.CREATED.value()
 
         return Success()
     }
