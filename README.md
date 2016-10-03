@@ -94,7 +94,7 @@ You can omit candidates. (They will be considerated as equally not preferred)
 #### Close poll
 Make a `DELETE /poll/close` request with the poll token (not a vote token)
 ```bash
-curl -X DELETE -H "Content-Type: application/json" -H "Accept: application/json" -d "DFfyef3EGHwMjJjGAwCFv9QQujqd6rCUFw9vmc7-" "http://localhost:8080/poll/close"
+curl -X DELETE -H "Content-Type: application/json" -H "Accept: application/json" -d "{ \"poll\": \"DFfyef3EGHwMjJjGAwCFv9QQujqd6rCUFw9vmc7-\" }"     "http://localhost:8080/poll/close"
 ```
 
 It will return a list of the candidates ordered from the winner(s) to the losers :

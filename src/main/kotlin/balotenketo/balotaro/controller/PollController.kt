@@ -1,24 +1,27 @@
+@file:Suppress("unused")
+
 package balotenketo.balotaro.controller
 
 import balotenketo.balotaro.Configuration
 import balotenketo.balotaro.model.*
-import com.google.common.base.Preconditions
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
+import io.swagger.annotations.ApiResponse
+import io.swagger.annotations.ApiResponses
 import kondorcet.SimplePoll
 import kondorcet.result
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
+
+class PollQuotaExceededException : Exception()
+class InvalidNumberOfCandidatesException : Exception()
 
 @Api("Polls", description = "Polls management")
 @RestController
-@Suppress("unused")
 class PollController {
 
     @Autowired
@@ -30,25 +33,40 @@ class PollController {
     @Autowired
     lateinit var ballotRepository: BallotRepository
 
+    @ResponseStatus(HttpStatus.FORBIDDEN, reason = "You cannot create more poll today. Close open polls or wait until tomorrow.")
+    @ExceptionHandler(PollQuotaExceededException::class)
+    fun handlePollQuotaExceeded() {
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST, reason = "Invalid number of candidates. You have to specify from 2 to 100 candidates.")
+    @ExceptionHandler(InvalidNumberOfCandidatesException::class)
+    fun handleInvalidNumberOfCandidates() {
+    }
+
     @ApiOperation("Create a new poll")
+    @ApiResponses(*arrayOf(
+            ApiResponse(code = 201, message = "Poll created"),
+            ApiResponse(code = 400, message = "Invalid number of candidates"),
+            ApiResponse(code = 403, message = "Maximum number of poll creation by day exceeded")))
     @RequestMapping("/poll/create",
             method = arrayOf(RequestMethod.POST),
             consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE),
             produces = arrayOf(MediaType.APPLICATION_JSON_VALUE))
+    @ResponseStatus(HttpStatus.CREATED)
     fun create(@RequestBody argument: PollCreationArgument, request: HttpServletRequest): PollCreationResult {
 
-        Preconditions.checkArgument(argument.choices.isNotEmpty(), "You have to specify choices")
-        Preconditions.checkArgument(argument.choices.size <= Configuration.maxCandidatesByPoll, "The number of candidates cannot exceed ${Configuration.maxCandidatesByPoll}")
+        if (argument.candidates.size < 2 || argument.candidates.size > Configuration.maxCandidatesByPoll)
+            throw InvalidNumberOfCandidatesException()
 
         val ip = request.remoteAddr
         val todayStart = DateTime.now().withMillisOfDay(0)
         val todayEnd = todayStart.plusDays(1).minusMillis(1)
         val pollCount = pollRepository.countByCreatorIPAndCreationDateBetween(ip, todayStart.toDate(), todayEnd.toDate())
 
-        Preconditions.checkArgument(pollCount < Configuration.maxPollCountByIP,
-                "You cannot create more poll from this IP address today. You have to close you previous polls first")
+        if (pollCount >= Configuration.maxPollCountByIP)
+            throw PollQuotaExceededException()
 
-        val poll = Poll(ip, choices = argument.choices.toSet()).apply { pollRepository.save(this) }
+        val poll = Poll(ip, choices = argument.candidates.toSet()).apply { pollRepository.save(this) }
         val tokens = (1..Configuration.tokensToCreate(0, argument.tokenCount)).map {
             VoteToken(poll).apply { tokenRepository.save(this) }
         }
@@ -60,15 +78,18 @@ class PollController {
     }
 
     @ApiOperation("Create new tokens for a poll")
+    @ApiResponses(*arrayOf(
+            ApiResponse(code = 201, message = "Tokens created"),
+            ApiResponse(code = 400, message = "Poll unspecified"),
+            ApiResponse(code = 404, message = "Unknown poll")))
     @RequestMapping("/poll/createTokens",
             method = arrayOf(RequestMethod.POST),
             consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE),
             produces = arrayOf(MediaType.APPLICATION_JSON_VALUE))
+    @ResponseStatus(HttpStatus.CREATED)
     fun createTokens(@RequestBody argument: TokenCreationArgument): List<String> {
 
-        val (pollID, secret) = argument.poll?.decode() ?: throw IllegalArgumentException("No poll specified")
-        val poll = pollRepository.findOne(pollID)
-        Preconditions.checkArgument(poll?.secret == secret, "Invalid poll")
+        val poll = pollRepository[argument.poll]
 
         return (1..Configuration.tokensToCreate(tokenRepository.countByPoll(poll), argument.tokenCount)).map {
             VoteToken(poll).apply { tokenRepository.save(this) }.let { encode(it.id, it.secret) }
@@ -76,17 +97,23 @@ class PollController {
     }
 
     @ApiOperation("Close a poll and return the result")
+    @ApiResponses(*arrayOf(
+            ApiResponse(code = 200, message = "Poll closed an result returned"),
+            ApiResponse(code = 400, message = "Poll unspecified"),
+            ApiResponse(code = 404, message = "Unknown poll")))
     @RequestMapping("/poll/close",
             method = arrayOf(RequestMethod.DELETE),
             consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE),
-            produces = arrayOf(MediaType.APPLICATION_JSON_VALUE))
-    fun close(@RequestBody pollToken: String): List<Set<String>> {
-        val (id, secret) = pollToken.decode()
+            produces = arrayOf(MediaType.APPLICATION_JSON_VALUE)
+    )
+    @ResponseStatus(HttpStatus.OK)
+    fun close(@RequestBody argument: PollClosingArgument): List<Set<String>> {
+        val poll = pollRepository[argument.poll]
 
-        val poll = pollRepository.findOne(id) ?: throw IllegalArgumentException("Invalid poll token")
-        Preconditions.checkArgument(poll.secret == secret, "Invalid poll token")
-
-        val result = ballotRepository.findByPoll(poll).fold(SimplePoll<String>()) { p, b -> p.vote(b); p }.result().orderedCandidates
+        val result = ballotRepository.findByPoll(poll)
+                .fold(SimplePoll<String>()) { p, b -> p.vote(b); p }
+                .result()
+                .orderedCandidates
 
         tokenRepository.deleteByPoll(poll)
         ballotRepository.deleteByPoll(poll)

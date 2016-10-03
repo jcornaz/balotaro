@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package balotenketo.balotaro.controller
 
 import balotenketo.balotaro.Configuration
@@ -19,25 +21,26 @@ fun Pair<String, BigInteger>.encode(): String =
 
 fun encode(id: String, secret: BigInteger): String = (id to secret).encode()
 
-@ApiModel("Success of the operation")
+@ApiModel("Success get the operation")
 open class Success(
         @ApiModelProperty("True if the operation asked was a success. False otherwise")
         val success: Boolean = true
 )
 
-@ApiModel("Failure of the operation")
+@ApiModel("Failure get the operation")
 open class Failure(
+
         @ApiModelProperty("Why the operation didn't succeed")
-        val message: String
+        val message: String = ""
 ) : Success(false)
 
 @ApiModel("Poll creation argument")
 data class PollCreationArgument(
 
-        @ApiModelProperty("Choices possible for the poll", required = true)
-        val choices: Set<String> = emptySet(),
+        @ApiModelProperty("Candidates for the poll", required = true)
+        val candidates: Set<String> = emptySet(),
 
-        @ApiModelProperty("Number of token to generate (10 by default)", required = false)
+        @ApiModelProperty("Number get token to generate", required = false)
         val tokenCount: Int = Configuration.defaultTokenCount
 )
 
@@ -45,26 +48,33 @@ data class PollCreationArgument(
 data class PollCreationResult(
 
         @ApiModelProperty("Created poll")
-        val poll: String? = null,
+        val poll: String = "",
 
         @ApiModelProperty("Created tokens")
         val tokens: Collection<String> = emptyList()
 )
 
+@ApiModel("Poll closing argument")
+data class PollClosingArgument(
+
+        @ApiModelProperty("Poll to close")
+        val poll: String = ""
+)
+
 @ApiModel("Token creation argument")
 data class TokenCreationArgument(
         @ApiModelProperty("Poll credentials", required = true)
-        val poll: String? = null,
+        val poll: String = "",
 
-        @ApiModelProperty("Number of token to generate (10 by default)", required = false)
+        @ApiModelProperty("Number get token to generate", required = false)
         val tokenCount: Int = Configuration.defaultTokenCount
 )
 
 @ApiModel("Ballot submission")
 data class BallotArgument(
         @ApiModelProperty("Vote token", required = true)
-        val token: String? = null,
+        val token: String = "",
 
-        @ApiModelProperty("Ordered candidates", required = false)
+        @ApiModelProperty("Ordered chosen candidates", required = false)
         val candidates: List<Set<String>> = emptyList()
 )

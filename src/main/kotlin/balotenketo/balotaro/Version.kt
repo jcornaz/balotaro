@@ -3,7 +3,7 @@ package balotenketo.balotaro
 import io.swagger.annotations.ApiModel
 import io.swagger.annotations.ApiModelProperty
 
-@ApiModel("Version of the web service")
+@ApiModel("Version get the web service")
 object Version {
 
     @ApiModelProperty("Major version")

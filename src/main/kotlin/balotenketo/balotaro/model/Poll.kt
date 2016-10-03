@@ -15,7 +15,7 @@ class Poll(
 ) {
 
     @Id
-    @ApiModelProperty("Id of the poll")
+    @ApiModelProperty("Id get the poll")
     lateinit var id: String
         private set
 
