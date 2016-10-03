@@ -40,7 +40,7 @@ dependencies {
     compile 'io.springfox:springfox-swagger2:2.2.2'
 
     compile 'joda-time:joda-time:2.9.4'
-    compile 'com.github.slimaku:kondorcet:v1.0-rc2'
+    compile 'com.github.slimaku:kondorcet:807c65ea0416e43131686974ab3282281244becd'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
 }

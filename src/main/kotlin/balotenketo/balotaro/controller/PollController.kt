@@ -9,7 +9,9 @@ import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
 import kondorcet.SimplePoll
+import kondorcet.plus
 import kondorcet.result
+import kondorcet.with
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -66,7 +68,7 @@ class PollController {
         if (pollCount >= Configuration.maxPollCountByIP)
             throw PollQuotaExceededException()
 
-        val poll = Poll(ip, choices = argument.candidates.toSet()).apply { pollRepository.save(this) }
+        val poll = Poll(ip, candidates = argument.candidates.toSet()).apply { pollRepository.save(this) }
         val tokens = (1..Configuration.tokensToCreate(0, argument.tokenCount)).map {
             VoteToken(poll).apply { tokenRepository.save(this) }
         }
@@ -110,9 +112,10 @@ class PollController {
     fun close(@RequestBody argument: PollClosingArgument): List<Set<String>> {
         val poll = pollRepository[argument.poll]
 
-        val result = ballotRepository.findByPoll(poll)
+        var result = ballotRepository.findByPoll(poll)
                 .fold(SimplePoll<String>()) { p, b -> p.vote(b); p }
                 .result()
+                .with(poll.candidates)
                 .orderedCandidates
 
         tokenRepository.deleteByPoll(poll)

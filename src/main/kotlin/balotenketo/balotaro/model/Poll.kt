@@ -11,7 +11,7 @@ class Poll(
         creatorIP: String? = null,
         val creationDate: Date = DateTime.now().toDate(),
         val expirationDate: Date = DateTime(creationDate).plusMonths(1).toDate(),
-        val choices: Set<String> = emptySet()
+        val candidates: Set<String> = emptySet()
 ) {
 
     @Id

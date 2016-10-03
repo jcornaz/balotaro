@@ -42,7 +42,7 @@ class VoteController {
 
         val ballot = Ballot(token.poll, argument.candidates)
         Preconditions.checkArgument(!ballot.hasDuplicates(), "This ballot contains duplicates")
-        Preconditions.checkArgument(ballot.candidates().all { it in token.poll.choices }, "This ballot contains unknown candidates")
+        Preconditions.checkArgument(ballot.candidates().all { it in token.poll.candidates }, "This ballot contains unknown candidates")
 
         tokenRepository.save(token.apply { used = true })
         ballotRepository.save(ballot)
