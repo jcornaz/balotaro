@@ -38,8 +38,8 @@ When running, you can find a complete API documentation at [http://localhost:808
 
 All requests require and produces JSON.
 
-### Create a poll
-Hit `/poll/create` with at least some *choices* as argument :
+#### Create a poll
+Make a `POST /poll/create` request with at least some *choices* as argument :
 ```bash
 curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d "{ \"choices\": [\"lundo\", \"mardo\", \"merkredo\", \"ĵaŭdo\", \"vendredo\" } }" "http://localhost:8080/poll/create"
 ```
@@ -58,10 +58,10 @@ I would return this kind of JSON :
 
 A client (identified by IP address) cannot create more than 10 poll by day.
 
-### The vote tokens
+#### Vote tokens
 Tokens are needed to vote. They are specific fore the poll and cannot be used of an another. Each token allow to make exactly one vote (not more).
 
-You can create more tokens for an existing poll with `/poll/createTokens` using the poll id and secret returned by `/poll/create` :
+You can create more tokens for an existing poll with `POST /poll/createTokens` using the poll id and secret returned by `POST /poll/create` :
 ```bash
 curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d "{ \"poll\": \"V_EaDe3BMA6I5E2MZG1wOExHwoAnGjuVzfmUvg==\" }" "http://localhost:8080/poll/createTokens"
 ```
@@ -77,8 +77,8 @@ It will return a list of token like that :
 
 There is a limit of 1000 tokens by poll
 
-### Vote
-Hit `/vote` with an unused token and your ballot (choices ordered by preferences) :
+#### Vote
+Make a `POST /vote` request with an unused token and your ballot (choices ordered by preferences) :
 ```bash
 curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d "{ \"candidates\": [[\"mardo\"], [\"lundo\", \"ĵaŭdo\"], [\"vendredo\"]], \"token\": \"V_EcGO3BMBSM2y9RP2bBdrs2nszGSn8I-CtVnw==\" }" "http://localhost:8080/vote/"
 ```
@@ -90,3 +90,16 @@ You can omit candidates. (They will be considerated as equally not preferred)
 * `[[A], [B], [C]]` :  **A** is preferred to **B** which is preferred to **C**
 * `[[A, B], [C]]` : **A** and **B** are equally preferred, but both are preferred to **C**
 * `[[A]]` : **A** Is the preferred. **B** and **C** are equally no preferred (omitted)
+
+#### Close poll
+Make a `DELETE /poll/close` request with the poll token (not a vote token)
+```bash
+curl -X DELETE -H "Content-Type: application/json" -H "Accept: application/json" -d "DFfyef3EGHwMjJjGAwCFv9QQujqd6rCUFw9vmc7-" "http://localhost:8080/poll/close"
+```
+
+It will return a list of the candidates ordered from the winner(s) to the losers :
+```json
+[["mardo"], ["lundo", "ĵaŭdo"], ["vendredo"], ["lundo", "merkredo"]]
+```
+
+The result is computed using the [Schulze method](https://en.wikipedia.org/wiki/Schulze_method) (a specific [Condorcet method](https://en.wikipedia.org/wiki/Condorcet_method), that solve [voting paradoxes](https://en.wikipedia.org/wiki/Voting_paradox))

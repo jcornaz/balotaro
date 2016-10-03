@@ -1,13 +1,12 @@
 package balotenketo.balotaro.model
 
-import kondorcet.Ballot
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.repository.MongoRepository
 
 class Ballot(
         poll: Poll? = null,
         override val orderedCandidates: List<Set<String>> = emptyList()
-) : Ballot<String> {
+) : kondorcet.Ballot<String> {
 
     @Id
     lateinit var id: String
@@ -22,4 +21,7 @@ class Ballot(
     }
 }
 
-interface BallotRepository : MongoRepository<balotenketo.balotaro.model.Ballot, String>
+interface BallotRepository : MongoRepository<Ballot, String> {
+    fun findByPoll(poll: Poll): Collection<Ballot>
+    fun deleteByPoll(poll: Poll)
+}

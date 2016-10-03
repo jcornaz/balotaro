@@ -35,4 +35,5 @@ class VoteToken(poll: Poll? = null) {
 
 interface VoteTokenRepository : MongoRepository<VoteToken, String> {
     fun countByPoll(poll: Poll): Int
+    fun deleteByPoll(poll: Poll)
 }

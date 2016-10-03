@@ -1,9 +1,13 @@
 # Change log
 ## 1.0-SNAPSHOT
 ### Added
-* `/` return the app name, description and version
-* `/version` return the version of the web service
-* `/poll/create` Create a new poll
-* `/poll/createTokens` Create new tokens for a poll
-* `/poll/vote` Submit a ballot and consume the vote-token
+#### Web service methods
+* `GET /` return the app name, description and version
+* `GET /version` return the version of the web service
+* `POST /poll/create` Create a new poll
+* `POST /poll/createTokens` Create new tokens for a poll
+* `POST /vote` Submit a ballot and consume the vote-token
+* `DELETE /poll/close` Close a poll and return the result
+
+#### Other
 * API documentation with Swagger (UI at `/swagger-ui.html`)
