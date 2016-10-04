@@ -58,7 +58,7 @@ I would return this kind of JSON :
 }
 ```
 
-A client (identified by IP address) cannot create more than 10 poll by day.
+A client (identified by IP address) cannot create more than 10 poll by day. 
 
 #### Vote tokens
 Tokens are needed to vote. They are specific fore the poll and cannot be used of an another. Each token allow to make exactly one vote (not more).
@@ -78,6 +78,9 @@ It will return a list of token like that :
 ```
 
 There is a limit of 1000 tokens by poll
+
+##### Unsafe poll
+When creating a poll, you can specify `"secure": false` in the JSON argument. If you do that the ballot will have only vote token (not more, not less) and the vote token can be used many times.
 
 #### Vote
 Make a `POST /vote` request with an unused token and your ballot (choices ordered by preferences) :

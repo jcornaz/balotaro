@@ -9,6 +9,7 @@ import java.util.*
 
 class Poll(
         creatorIP: String? = null,
+        val isSecure: Boolean = true,
         val creationDate: Date = DateTime.now().toDate(),
         val expirationDate: Date = DateTime(creationDate).plusMonths(1).toDate(),
         val candidates: Set<String> = emptySet()

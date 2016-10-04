@@ -9,7 +9,6 @@ import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
 import kondorcet.SimplePoll
-import kondorcet.plus
 import kondorcet.result
 import kondorcet.with
 import org.joda.time.DateTime
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
 
 class PollQuotaExceededException : Exception()
+class TokenQuotaExceededException : Exception()
 class InvalidNumberOfCandidatesException : Exception()
 
 @Api("Polls", description = "Polls management")
@@ -68,8 +68,9 @@ class PollController {
         if (pollCount >= Configuration.maxPollCountByIP)
             throw PollQuotaExceededException()
 
-        val poll = Poll(ip, candidates = argument.candidates.toSet()).apply { pollRepository.save(this) }
-        val tokens = (1..Configuration.tokensToCreate(0, argument.tokenCount)).map {
+        val poll = Poll(ip, argument.secure, candidates = argument.candidates.toSet()).apply { pollRepository.save(this) }
+        val nbToken = if (argument.secure) Configuration.tokensToCreate(0, argument.tokenCount) else 1
+        val tokens = (1..nbToken).map {
             VoteToken(poll).apply { tokenRepository.save(this) }
         }
 
@@ -93,7 +94,9 @@ class PollController {
 
         val poll = pollRepository[argument.poll]
 
-        return (1..Configuration.tokensToCreate(tokenRepository.countByPoll(poll), argument.tokenCount)).map {
+        val nbTokens = if (poll.isSecure) Configuration.tokensToCreate(tokenRepository.countByPoll(poll), argument.tokenCount) else 0
+
+        return (1..nbTokens).map {
             VoteToken(poll).apply { tokenRepository.save(this) }.let { encode(it.id, it.secret) }
         }
     }
@@ -112,7 +115,7 @@ class PollController {
     fun close(@RequestBody argument: PollClosingArgument): List<Set<String>> {
         val poll = pollRepository[argument.poll]
 
-        var result = ballotRepository.findByPoll(poll)
+        val result = ballotRepository.findByPoll(poll)
                 .fold(SimplePoll<String>()) { p, b -> p.vote(b); p }
                 .result()
                 .with(poll.candidates)

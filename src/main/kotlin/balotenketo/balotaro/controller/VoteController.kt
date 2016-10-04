@@ -44,7 +44,9 @@ class VoteController {
         Preconditions.checkArgument(!ballot.hasDuplicates(), "This ballot contains duplicates")
         Preconditions.checkArgument(ballot.candidates().all { it in token.poll.candidates }, "This ballot contains unknown candidates")
 
-        tokenRepository.save(token.apply { used = true })
+        if (token.poll.isSecure)
+            tokenRepository.save(token.apply { used = true })
+
         ballotRepository.save(ballot)
 
         response.status = HttpStatus.CREATED.value()
