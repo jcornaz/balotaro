@@ -41,7 +41,10 @@ data class PollCreationArgument(
         val candidates: Set<String> = emptySet(),
 
         @ApiModelProperty("Number get token to generate", required = false)
-        val tokenCount: Int = Configuration.defaultTokenCount
+        val tokenCount: Int = Configuration.defaultTokenCount,
+
+        @ApiModelProperty("If false, only one token will be generated and used to vote", required = false)
+        val secure: Boolean = true
 )
 
 @ApiModel("Poll creation result")
