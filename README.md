@@ -43,7 +43,7 @@ All requests require and produces JSON.
 ### Create a poll
 Make a `POST /poll/create` request with at least some *choices* as argument :
 ```bash
-curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d "{ \"choices\": [\"lundo\", \"mardo\", \"merkredo\", \"ĵaŭdo\", \"vendredo\" } }" "http://localhost:8080/poll/create"
+curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d "{ \"choices\": [\"lundo\", \"mardo\", \"merkredo\", \"ĵaŭdo\", \"vendredo\" }, \"method\": \"schulze\" }" "http://localhost:8080/poll/create"
 ```
 
 I would return this kind of JSON : 
@@ -58,7 +58,10 @@ I would return this kind of JSON :
 }
 ```
 
-A client (identified by IP address) cannot create more than 10 poll by day. 
+#### Supported voting method
+* [Schulze](https://en.wikipedia.org/wiki/Schulze_method) (default, if not specified)
+* [Condorcet](https://en.wikipedia.org/wiki/Condorcet_method)
+* [Relative majority](https://en.wikipedia.org/wiki/Plurality_(voting)#Majority_versus_plurality)
 
 ### Vote tokens
 Tokens are needed to vote. They are specific fore the poll and cannot be used of an another. Each token allow to make exactly one vote (not more).
@@ -76,8 +79,6 @@ It will return a list of token like that :
   "V_EcGO3BMBSM2y9RP2bBdrs2nszGSn8I-CtVnw=="
 ]
 ```
-
-There is a limit of 1000 tokens by poll
 
 #### Unsafe poll
 When creating a poll, you can specify `"secure": false` in the JSON argument. If you do that, the poll will have only vote token (not more, not less) and the vote token can be used many times.
@@ -106,5 +107,3 @@ It will return a list of the candidates ordered from the winner(s) to the losers
 ```json
 [["mardo"], ["lundo", "ĵaŭdo"], ["vendredo"], ["lundo", "merkredo"]]
 ```
-
-The result is computed using the [Schulze method](https://en.wikipedia.org/wiki/Schulze_method) (a specific [Condorcet method](https://en.wikipedia.org/wiki/Condorcet_method), that solve [voting paradoxes](https://en.wikipedia.org/wiki/Voting_paradox))
