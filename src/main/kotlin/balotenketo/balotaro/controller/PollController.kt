@@ -48,7 +48,13 @@ class PollController {
 
         assertQuota(pollRepository, tokenRepository, ballotRepository, request.remoteAddr, argument.tokenCount + 1)
 
-        val poll = Poll(request.remoteAddr, argument.secure, candidates = argument.candidates.toSet()).apply { pollRepository.save(this) }
+        val poll = Poll(
+                creatorIP = request.remoteAddr,
+                isSecure = argument.secure,
+                candidates = argument.candidates.toSet(),
+                method = VoteMethod.of(argument.method)
+        ).apply { pollRepository.save(this) }
+
         val tokens = (1..argument.tokenCount).map {
             VoteToken(request.remoteAddr, poll).apply { tokenRepository.save(this) }
         }
@@ -96,7 +102,7 @@ class PollController {
 
         val result = ballotRepository.findByPoll(poll)
                 .fold(SimplePoll<String>()) { p, b -> p.vote(b); p }
-                .result()
+                .result(poll.method.implementation)
                 .with(poll.candidates)
                 .orderedCandidates
 

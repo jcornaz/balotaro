@@ -30,7 +30,10 @@ data class PollCreationArgument(
         val tokenCount: Int = Configuration.defaultTokenCount,
 
         @ApiModelProperty("If false, only one token will be generated and used to vote", required = false)
-        val secure: Boolean = true
+        val secure: Boolean = true,
+
+        @ApiModelProperty("Voting method to use. Can be \"schulze\" (default) or \"condorcet\" or \"relative_majority\"")
+        val method: String = "schulze"
 )
 
 @ApiModel("Poll creation result")

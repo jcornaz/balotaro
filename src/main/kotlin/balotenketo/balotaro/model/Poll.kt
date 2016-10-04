@@ -12,7 +12,8 @@ class Poll(
         val isSecure: Boolean = true,
         val creationDate: Date = DateTime.now().toDate(),
         val expirationDate: Date = DateTime(creationDate).plusMonths(1).toDate(),
-        val candidates: Set<String> = emptySet()
+        val candidates: Set<String> = emptySet(),
+        val method: VoteMethod = VoteMethod.SCHULZE
 ) {
 
     @Id
