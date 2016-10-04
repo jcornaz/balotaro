@@ -40,7 +40,7 @@ When running, you can find a complete API documentation at [http://localhost:808
 
 All requests require and produces JSON.
 
-#### Create a poll
+### Create a poll
 Make a `POST /poll/create` request with at least some *choices* as argument :
 ```bash
 curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d "{ \"choices\": [\"lundo\", \"mardo\", \"merkredo\", \"ĵaŭdo\", \"vendredo\" } }" "http://localhost:8080/poll/create"
@@ -60,7 +60,7 @@ I would return this kind of JSON :
 
 A client (identified by IP address) cannot create more than 10 poll by day. 
 
-#### Vote tokens
+### Vote tokens
 Tokens are needed to vote. They are specific fore the poll and cannot be used of an another. Each token allow to make exactly one vote (not more).
 
 You can create more tokens for an existing poll with `POST /poll/createTokens` using the poll id and secret returned by `POST /poll/create` :
@@ -79,10 +79,10 @@ It will return a list of token like that :
 
 There is a limit of 1000 tokens by poll
 
-##### Unsafe poll
-When creating a poll, you can specify `"secure": false` in the JSON argument. If you do that the ballot will have only vote token (not more, not less) and the vote token can be used many times.
+#### Unsafe poll
+When creating a poll, you can specify `"secure": false` in the JSON argument. If you do that, the poll will have only vote token (not more, not less) and the vote token can be used many times.
 
-#### Vote
+### Vote
 Make a `POST /vote` request with an unused token and your ballot (choices ordered by preferences) :
 ```bash
 curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d "{ \"candidates\": [[\"mardo\"], [\"lundo\", \"ĵaŭdo\"], [\"vendredo\"]], \"token\": \"V_EcGO3BMBSM2y9RP2bBdrs2nszGSn8I-CtVnw==\" }" "http://localhost:8080/vote/"
@@ -91,12 +91,12 @@ curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -
 Note that `candidates` is list of list ordered from the most preferred candidates to the least preferred.
 You can omit candidates. (They will be considerated as equally not preferred)
 
-#### Exemples of lists :
+### Exemples of lists :
 * `[[A], [B], [C]]` :  **A** is preferred to **B** which is preferred to **C**
 * `[[A, B], [C]]` : **A** and **B** are equally preferred, but both are preferred to **C**
 * `[[A]]` : **A** Is the preferred. **B** and **C** are equally no preferred (omitted)
 
-#### Close poll
+### Close poll
 Make a `DELETE /poll/close` request with the poll token (not a vote token)
 ```bash
 curl -X DELETE -H "Content-Type: application/json" -H "Accept: application/json" -d "{ \"poll\": \"DFfyef3EGHwMjJjGAwCFv9QQujqd6rCUFw9vmc7-\" }"     "http://localhost:8080/poll/close"
