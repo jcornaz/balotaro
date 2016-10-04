@@ -5,6 +5,7 @@ import balotenketo.balotaro.controller.encode
 import balotenketo.balotaro.model.SecretGenerator
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.springframework.util.Base64Utils
 import java.math.BigInteger
 import java.util.*
 
@@ -29,7 +30,7 @@ class EncodingTest {
     @Test
     fun testEncodeDecodeZero() {
         val id = "0"
-        val secret = BigInteger("0")
+        val secret = Base64Utils.encodeToUrlSafeString(ByteArray(1))
 
         val (decodedID, decodedSecret) = (id to secret).encode().decode()
 
@@ -40,7 +41,7 @@ class EncodingTest {
     @Test
     fun testEncodeDecodeMinByteValue() {
         val id = ByteArray(12) { Byte.MIN_VALUE }.let(::BigInteger).toString(16)
-        val secret = ByteArray(128 / 8) { Byte.MIN_VALUE }.let(::BigInteger)
+        val secret = ByteArray(128 / 8) { Byte.MIN_VALUE }.let(Base64Utils::encodeToUrlSafeString)
 
         val (decodedID, decodedSecret) = (id to secret).encode().decode()
 
@@ -51,7 +52,7 @@ class EncodingTest {
     @Test
     fun testEncodeDecodeMaxByteValue() {
         val id = ByteArray(12) { Byte.MAX_VALUE }.let(::BigInteger).toString(16)
-        val secret = ByteArray(128 / 8) { Byte.MAX_VALUE }.let(::BigInteger)
+        val secret = ByteArray(128 / 8) { Byte.MAX_VALUE }.let(Base64Utils::encodeToUrlSafeString)
 
         val (decodedID, decodedSecret) = (id to secret).encode().decode()
 

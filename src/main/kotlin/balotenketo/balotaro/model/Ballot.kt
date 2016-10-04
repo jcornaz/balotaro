@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package balotenketo.balotaro.model
 
 import org.springframework.data.annotation.Id

@@ -1,11 +1,11 @@
+@file:Suppress("unused")
+
 package balotenketo.balotaro.model
 
-import io.swagger.annotations.ApiModelProperty
 import org.joda.time.DateTime
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.repository.MongoRepository
 import java.util.*
-
 
 class Poll(
         val creatorIP: String = "",
