@@ -1,6 +1,8 @@
 # Balotaro
-[![Build Status](https://travis-ci.org/slimaku/balotaro.svg?branch=master)](https://travis-ci.org/slimaku/balotaro)
 [![GPLv3](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://raw.githubusercontent.com/slimaku/balotaro/master/LICENSE)
+[![Build Status](https://travis-ci.org/slimaku/balotaro.svg?branch=master)](https://travis-ci.org/slimaku/balotaro)
+[![Issues](https://img.shields.io/github/issues/slimaku/balotaro.svg)](https://github.com/slimaku/balotaro/issues)
+[![Pull requests](https://img.shields.io/github/issues-pr/slimaku/balotaro.svg)](https://github.com/slimaku/balotaro/pulls)
 
 RESTFul Web service to vote on any subject using the [Condorcet method](https://en.wikipedia.org/wiki/Condorcet_method).
 
