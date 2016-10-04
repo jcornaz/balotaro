@@ -11,16 +11,12 @@ import io.swagger.annotations.ApiResponses
 import kondorcet.SimplePoll
 import kondorcet.result
 import kondorcet.with
-import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
 
-class PollQuotaExceededException : Exception()
-class TokenQuotaExceededException : Exception()
-class InvalidNumberOfCandidatesException : Exception()
 
 @Api("Polls", description = "Polls management")
 @RestController
@@ -35,21 +31,11 @@ class PollController {
     @Autowired
     lateinit var ballotRepository: BallotRepository
 
-    @ResponseStatus(HttpStatus.FORBIDDEN, reason = "You cannot create more poll today. Close open polls or wait until tomorrow.")
-    @ExceptionHandler(PollQuotaExceededException::class)
-    fun handlePollQuotaExceeded() {
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST, reason = "Invalid number of candidates. You have to specify from 2 to 100 candidates.")
-    @ExceptionHandler(InvalidNumberOfCandidatesException::class)
-    fun handleInvalidNumberOfCandidates() {
-    }
-
     @ApiOperation("Create a new poll")
     @ApiResponses(*arrayOf(
             ApiResponse(code = 201, message = "Poll created"),
             ApiResponse(code = 400, message = "Invalid number of candidates"),
-            ApiResponse(code = 403, message = "Maximum number of poll creation by day exceeded")))
+            ApiResponse(code = 403, message = "Maximum number of poll exceeded")))
     @RequestMapping("/poll/create",
             method = arrayOf(RequestMethod.POST),
             consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE),
@@ -60,18 +46,11 @@ class PollController {
         if (argument.candidates.size < 2 || argument.candidates.size > Configuration.maxCandidatesByPoll)
             throw InvalidNumberOfCandidatesException()
 
-        val ip = request.remoteAddr
-        val todayStart = DateTime.now().withMillisOfDay(0)
-        val todayEnd = todayStart.plusDays(1).minusMillis(1)
-        val pollCount = pollRepository.countByCreatorIPAndCreationDateBetween(ip, todayStart.toDate(), todayEnd.toDate())
+        assertQuota(pollRepository, tokenRepository, ballotRepository, request.remoteAddr, argument.tokenCount + 1)
 
-        if (pollCount >= Configuration.maxPollCountByIP)
-            throw PollQuotaExceededException()
-
-        val poll = Poll(ip, argument.secure, candidates = argument.candidates.toSet()).apply { pollRepository.save(this) }
-        val nbToken = if (argument.secure) Configuration.tokensToCreate(0, argument.tokenCount) else 1
-        val tokens = (1..nbToken).map {
-            VoteToken(poll).apply { tokenRepository.save(this) }
+        val poll = Poll(request.remoteAddr, argument.secure, candidates = argument.candidates.toSet()).apply { pollRepository.save(this) }
+        val tokens = (1..argument.tokenCount).map {
+            VoteToken(request.remoteAddr, poll).apply { tokenRepository.save(this) }
         }
 
         return PollCreationResult(
@@ -90,14 +69,14 @@ class PollController {
             consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE),
             produces = arrayOf(MediaType.APPLICATION_JSON_VALUE))
     @ResponseStatus(HttpStatus.CREATED)
-    fun createTokens(@RequestBody argument: TokenCreationArgument): List<String> {
+    fun createTokens(@RequestBody argument: TokenCreationArgument, request: HttpServletRequest): List<String> {
 
         val poll = pollRepository[argument.poll]
 
-        val nbTokens = if (poll.isSecure) Configuration.tokensToCreate(tokenRepository.countByPoll(poll), argument.tokenCount) else 0
+        assertQuota(pollRepository, tokenRepository, ballotRepository, request.remoteAddr, argument.tokenCount)
 
-        return (1..nbTokens).map {
-            VoteToken(poll).apply { tokenRepository.save(this) }.let { encode(it.id, it.secret) }
+        return (1..argument.tokenCount).map {
+            VoteToken(request.remoteAddr, poll).apply { tokenRepository.save(this) }.let { encode(it.id, it.secret) }
         }
     }
 

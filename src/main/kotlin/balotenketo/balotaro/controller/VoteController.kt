@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
-import javax.servlet.http.HttpServletResponse
+import javax.servlet.http.HttpServletRequest
 
 @Api("Vote", description = "Voting endpoint")
 @RestController
@@ -36,20 +36,18 @@ class VoteController {
             consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE),
             produces = arrayOf(MediaType.APPLICATION_JSON_VALUE))
     @ResponseStatus(HttpStatus.CREATED)
-    fun vote(@RequestBody argument: BallotArgument, response: HttpServletResponse): Success {
+    fun vote(@RequestBody argument: BallotArgument, request: HttpServletRequest): Success {
 
         val token = tokenRepository[argument.token]
 
-        val ballot = Ballot(token.poll, argument.candidates)
+        if (token.poll.isSecure)
+            tokenRepository.delete(token)
+
+        val ballot = Ballot(request.remoteAddr, token.poll, argument.candidates)
         Preconditions.checkArgument(!ballot.hasDuplicates(), "This ballot contains duplicates")
         Preconditions.checkArgument(ballot.candidates().all { it in token.poll.candidates }, "This ballot contains unknown candidates")
 
-        if (token.poll.isSecure)
-            tokenRepository.save(token.apply { used = true })
-
         ballotRepository.save(ballot)
-
-        response.status = HttpStatus.CREATED.value()
 
         return Success()
     }
