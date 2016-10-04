@@ -32,4 +32,5 @@ class Poll(
 
 interface PollRepository : MongoRepository<Poll, String> {
     fun countByCreatorIPAndCreationDateBetween(creatorIP: String, creationDateStart: Date, creationEnd: Date): Int
+    fun findByExpirationDateLessThan(expirationDate: Date): Collection<Poll>
 }
