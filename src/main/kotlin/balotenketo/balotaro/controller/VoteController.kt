@@ -4,6 +4,7 @@ package balotenketo.balotaro.controller
 
 import balotenketo.balotaro.model.Ballot
 import balotenketo.balotaro.model.BallotRepository
+import balotenketo.balotaro.model.PollRepository
 import balotenketo.balotaro.model.VoteTokenRepository
 import com.google.common.base.Preconditions
 import io.swagger.annotations.Api
@@ -19,6 +20,9 @@ import javax.servlet.http.HttpServletRequest
 @Api("Vote", description = "Voting endpoint")
 @RestController
 class VoteController {
+
+    @Autowired
+    lateinit var pollRepository: PollRepository
 
     @Autowired
     lateinit var tokenRepository: VoteTokenRepository
@@ -42,6 +46,8 @@ class VoteController {
 
         if (token.poll.isSecure)
             tokenRepository.delete(token)
+        else
+            assertQuota(pollRepository, tokenRepository, ballotRepository, request.remoteAddr, 1)
 
         val ballot = Ballot(request.remoteAddr, token.poll, argument.candidates)
         Preconditions.checkArgument(!ballot.hasDuplicates(), "This ballot contains duplicates")
