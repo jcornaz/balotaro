@@ -25,6 +25,16 @@ open class Balotaro {
         val license = "GNU General Public License Version 3"
         val licenseUrl = "https://raw.githubusercontent.com/slimaku/balotaro/master/LICENSE"
         val version = Version
+
+        fun Docket.serviceInformation(): Docket =
+                apiInfo(ApiInfoBuilder().apply {
+                    title(title)
+                    description(description)
+                    contact(authors.joinToString(", "))
+                    license(license)
+                    licenseUrl(licenseUrl)
+                    version(version.toString())
+                }.build())
     }
 
     @Bean
@@ -32,14 +42,7 @@ open class Balotaro {
         return Docket(DocumentationType.SWAGGER_2).apply {
             groupName(groupName)
 
-            apiInfo(ApiInfoBuilder().apply {
-                title(title)
-                description(description)
-                contact(authors.joinToString(", "))
-                license(license)
-                licenseUrl(licenseUrl)
-                version(version.toString())
-            }.build())
+            serviceInformation()
 
             select().apply {
                 apis(RequestHandlerSelectors.basePackage("balotenketo.balotaro"))

@@ -49,15 +49,13 @@ class PollController {
                 isSecure = argument.secure,
                 candidates = argument.candidates.toSet(),
                 method = VoteMethod.of(argument.method)
-        ).apply { pollRepository.save(this) }
+        )
 
-        val tokens = (1..argument.tokenCount).map {
-            VoteToken(request.remoteAddr, poll).apply { tokenRepository.save(this) }
-        }
+        pollRepository.save(poll)
 
         return PollCreationResult(
                 poll = encode(poll.id, poll.secret),
-                tokens = tokens.map { encode(it.id, it.secret) }
+                tokens = createTokens(poll, request.remoteAddr, argument.tokenCount)
         )
     }
 
@@ -72,14 +70,11 @@ class PollController {
             produces = arrayOf(MediaType.APPLICATION_JSON_VALUE))
     @ResponseStatus(HttpStatus.CREATED)
     fun createTokens(@RequestBody argument: TokenCreationArgument, request: HttpServletRequest): List<String> {
-
         val poll = pollRepository[argument.poll]
 
         request.assertCreatedQuota(argument.tokenCount, pollRepository, tokenRepository, ballotRepository)
 
-        return (1..argument.tokenCount).map {
-            VoteToken(request.remoteAddr, poll).apply { tokenRepository.save(this) }.let { encode(it.id, it.secret) }
-        }
+        return createTokens(poll, request.remoteAddr, argument.tokenCount)
     }
 
     @ApiOperation("Close a poll and return the result")
@@ -107,4 +102,7 @@ class PollController {
 
         return result
     }
+
+    fun createTokens(poll: Poll, ip: String, count: Int) =
+            (1..count).map { VoteToken(ip, poll).apply { tokenRepository.save(this) }.let { encode(it.id, it.secret) } }
 }

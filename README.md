@@ -44,7 +44,7 @@ All requests require and produces JSON.
 ### Create a poll
 Make a `POST /poll/create` request with at least some *choices* as argument :
 ```bash
-curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d "{ \"choices\": [\"lundo\", \"mardo\", \"merkredo\", \"ĵaŭdo\", \"vendredo\" }, \"method\": \"schulze\" }" "http://localhost:8080/poll/create"
+curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d "{ \"candidates\": [\"lundo\", \"mardo\", \"merkredo\", \"ĵaŭdo\", \"vendredo\" }, \"method\": \"schulze\" }" "http://localhost:8080/poll/create"
 ```
 
 I would return this kind of JSON : 
