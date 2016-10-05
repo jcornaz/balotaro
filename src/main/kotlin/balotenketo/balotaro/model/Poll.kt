@@ -2,6 +2,7 @@
 
 package balotenketo.balotaro.model
 
+import balotenketo.balotaro.controller.IPOwnedEntityRepository
 import org.joda.time.DateTime
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.repository.MongoRepository
@@ -23,7 +24,7 @@ class Poll(
     val secret = SecretGenerator.generate()
 }
 
-interface PollRepository : MongoRepository<Poll, String> {
-    fun countByCreatorIP(creatorIP: String): Int
+interface PollRepository : MongoRepository<Poll, String>, IPOwnedEntityRepository {
+    override fun countByCreatorIP(creatorIP: String): Int
     fun findByExpirationDateLessThan(expirationDate: Date): Collection<Poll>
 }

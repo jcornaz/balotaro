@@ -2,6 +2,7 @@
 
 package balotenketo.balotaro.model
 
+import balotenketo.balotaro.controller.IPOwnedEntityRepository
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.repository.MongoRepository
 
@@ -24,8 +25,8 @@ class Ballot(
     }
 }
 
-interface BallotRepository : MongoRepository<Ballot, String> {
-    fun countByCreatorIP(creatorIP: String): Int
+interface BallotRepository : MongoRepository<Ballot, String>, IPOwnedEntityRepository {
+    override fun countByCreatorIP(creatorIP: String): Int
     fun findByPoll(poll: Poll): Collection<Ballot>
     fun deleteByPoll(poll: Poll)
 }

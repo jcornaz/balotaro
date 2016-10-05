@@ -2,6 +2,7 @@
 
 package balotenketo.balotaro.model
 
+import balotenketo.balotaro.controller.IPOwnedEntityRepository
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Version
 import org.springframework.data.mongodb.core.mapping.DBRef
@@ -31,8 +32,8 @@ class VoteToken(
     }
 }
 
-interface VoteTokenRepository : MongoRepository<VoteToken, String> {
-    fun countByCreatorIP(creatorIP: String): Int
+interface VoteTokenRepository : MongoRepository<VoteToken, String>, IPOwnedEntityRepository {
+    override fun countByCreatorIP(creatorIP: String): Int
     fun countByPoll(poll: Poll): Int
     fun deleteByPoll(poll: Poll)
 }

@@ -47,7 +47,7 @@ class VoteController {
         if (token.poll.isSecure)
             tokenRepository.delete(token)
         else
-            assertQuota(pollRepository, tokenRepository, ballotRepository, request.remoteAddr, 1)
+            request.assertCreatedQuota(1, pollRepository, tokenRepository, ballotRepository)
 
         val ballot = Ballot(request.remoteAddr, token.poll, argument.candidates)
         Preconditions.checkArgument(!ballot.hasDuplicates(), "This ballot contains duplicates")

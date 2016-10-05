@@ -34,7 +34,13 @@ data class PollCreationArgument(
 
         @ApiModelProperty("Voting method to use. Can be \"schulze\" (default) or \"condorcet\" or \"relative_majority\"")
         val method: String = "schulze"
-)
+) {
+
+    fun assertValid() {
+        if (candidates.size < 2 || candidates.size > Configuration.maxCandidatesByPoll)
+            throw InvalidNumberOfCandidatesException()
+    }
+}
 
 @ApiModel("Poll creation result")
 data class PollCreationResult(

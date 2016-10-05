@@ -2,7 +2,6 @@
 
 package balotenketo.balotaro.controller
 
-import balotenketo.balotaro.Configuration
 import balotenketo.balotaro.model.*
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
@@ -43,10 +42,7 @@ class PollController {
     @ResponseStatus(HttpStatus.CREATED)
     fun create(@RequestBody argument: PollCreationArgument, request: HttpServletRequest): PollCreationResult {
 
-        if (argument.candidates.size < 2 || argument.candidates.size > Configuration.maxCandidatesByPoll)
-            throw InvalidNumberOfCandidatesException()
-
-        assertQuota(pollRepository, tokenRepository, ballotRepository, request.remoteAddr, argument.tokenCount + 1)
+        request.assertCreatedQuota(argument.tokenCount + 1, pollRepository, tokenRepository, ballotRepository)
 
         val poll = Poll(
                 creatorIP = request.remoteAddr,
@@ -79,7 +75,7 @@ class PollController {
 
         val poll = pollRepository[argument.poll]
 
-        assertQuota(pollRepository, tokenRepository, ballotRepository, request.remoteAddr, argument.tokenCount)
+        request.assertCreatedQuota(argument.tokenCount, pollRepository, tokenRepository, ballotRepository)
 
         return (1..argument.tokenCount).map {
             VoteToken(request.remoteAddr, poll).apply { tokenRepository.save(this) }.let { encode(it.id, it.secret) }
@@ -94,8 +90,7 @@ class PollController {
     @RequestMapping("/poll/close",
             method = arrayOf(RequestMethod.DELETE),
             consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE),
-            produces = arrayOf(MediaType.APPLICATION_JSON_VALUE)
-    )
+            produces = arrayOf(MediaType.APPLICATION_JSON_VALUE))
     @ResponseStatus(HttpStatus.OK)
     fun close(@RequestBody argument: PollClosingArgument): List<Set<String>> {
         val poll = pollRepository[argument.poll]

@@ -3,12 +3,16 @@
 package balotenketo.balotaro.controller
 
 import balotenketo.balotaro.Configuration
-import balotenketo.balotaro.model.*
+import balotenketo.balotaro.model.Poll
+import balotenketo.balotaro.model.PollRepository
+import balotenketo.balotaro.model.VoteToken
+import balotenketo.balotaro.model.VoteTokenRepository
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import java.util.*
+import javax.servlet.ServletRequest
 
 class PollNotFound : Exception()
 class TokenNotFound : Exception()
@@ -33,7 +37,7 @@ class ControllerAdvice() {
     fun handleTokenNotFound() {
     }
 
-    @ResponseStatus(HttpStatus.FORBIDDEN, reason = "You cannot exceeded create more poll. Close open polls.")
+    @ResponseStatus(HttpStatus.FORBIDDEN, reason = "Your entity creation quota have been exceeded. You should close some poll.")
     @ExceptionHandler(QuotaExceededException::class)
     fun handleQuotaExceeded() {
     }
@@ -42,6 +46,10 @@ class ControllerAdvice() {
     @ExceptionHandler(InvalidNumberOfCandidatesException::class)
     fun handleInvalidNumberOfCandidates() {
     }
+}
+
+interface IPOwnedEntityRepository {
+    fun countByCreatorIP(creatorIP: String): Int
 }
 
 operator fun PollRepository.get(token: String): Poll {
@@ -64,21 +72,12 @@ operator fun VoteTokenRepository.get(token: String): VoteToken {
     return voteToken
 }
 
-@Throws(QuotaExceededException::class)
-fun assertQuota(
-        pollRepository: PollRepository,
-        tokenRepository: VoteTokenRepository,
-        ballotRepository: BallotRepository,
-        ip: String,
-        countToAdd: Int = 1
-) {
+fun ServletRequest.assertCreatedQuota(countToAdd: Int = 1, vararg repositories: IPOwnedEntityRepository) {
+    repositories.fold(countToAdd) { count, repo ->
 
-    var count = countToAdd
+        if (count > Configuration.maxDocumentCountByIP)
+            throw QuotaExceededException()
 
-    count += pollRepository.countByCreatorIP(ip)
-    count += tokenRepository.countByCreatorIP(ip)
-    count += ballotRepository.countByCreatorIP(ip)
-
-    if (count > Configuration.maxDocumentCountByIP)
-        throw QuotaExceededException()
+        count + repo.countByCreatorIP(remoteAddr)
+    }
 }
