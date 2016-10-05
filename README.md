@@ -1,6 +1,7 @@
 # Balotaro
 [![GPLv3](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://raw.githubusercontent.com/slimaku/balotaro/master/LICENSE)
 [![Build Status](https://travis-ci.org/slimaku/balotaro.svg?branch=master)](https://travis-ci.org/slimaku/balotaro)
+[![Codebeat](https://codebeat.co/badges/04435b31-0902-4b20-b315-138e4e7d8562)](https://codebeat.co/projects/github-com-slimaku-balotaro)
 [![Issues](https://img.shields.io/github/issues/slimaku/balotaro.svg)](https://github.com/slimaku/balotaro/issues)
 [![Pull requests](https://img.shields.io/github/issues-pr/slimaku/balotaro.svg)](https://github.com/slimaku/balotaro/pulls)
 
