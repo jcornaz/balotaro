@@ -8,7 +8,12 @@
 * `POST /poll/createTokens` Create new tokens for a poll
 * `POST /vote` Submit a ballot and consume the vote-token
 * `DELETE /poll/close` Close a poll and return the result
-* Automatically delete expired polls (a poll expire 30 days after it creation)
+
+#### Support of voting methods
+* [Schulze](https://en.wikipedia.org/wiki/Schulze_method)
+* [Condorcet](https://en.wikipedia.org/wiki/Condorcet_method)
+* [Relative majority](https://en.wikipedia.org/wiki/Plurality_(voting)#Majority_versus_plurality)
 
 #### Other
 * API documentation with Swagger (UI at `/swagger-ui.html`)
+* Automatically delete expired polls (a poll expire 30 days after it creation)
