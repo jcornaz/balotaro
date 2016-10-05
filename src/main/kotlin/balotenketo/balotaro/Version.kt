@@ -16,7 +16,7 @@ object Version {
     val patch: Int? = null
 
     @ApiModelProperty("Pre-release label (null if it is not a pre-release)")
-    val label: String? = "rc1"
+    val label: String? = "SNAPSHOT"
 
     @ApiModelProperty("True if it is a pre-release and false otherwise. (Pre-releases shouldn't be used in production)")
     val isPreRelease = label != null
