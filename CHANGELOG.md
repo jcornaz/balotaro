@@ -1,5 +1,5 @@
 # Change log
-## 1.0-SNAPSHOT
+## 1.0-rc1
 ### Added
 #### Web service methods
 * `GET /` return the app name, description and version
