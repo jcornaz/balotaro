@@ -50,8 +50,7 @@ class VoteController {
             request.assertCreatedQuota(1, pollRepository, tokenRepository, ballotRepository)
 
         val ballot = Ballot(request.remoteAddr, token.poll, argument.candidates)
-        Preconditions.checkArgument(!ballot.hasDuplicates(), "This ballot contains duplicates")
-        Preconditions.checkArgument(ballot.candidates().all { it in token.poll.candidates }, "This ballot contains unknown candidates")
+        Preconditions.checkArgument(ballot.candidates.all { it in token.poll.candidates }, "This ballot contains unknown candidates")
 
         ballotRepository.save(ballot)
 

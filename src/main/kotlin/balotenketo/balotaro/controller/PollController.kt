@@ -7,9 +7,10 @@ import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
-import kondorcet.SimplePoll
-import kondorcet.result
-import kondorcet.with
+import kondorcet.model.emptyPoll
+import kondorcet.model.getResult
+import kondorcet.model.plus
+import kondorcet.model.pollOf
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -91,9 +92,8 @@ class PollController {
         val poll = pollRepository[argument.poll]
 
         val result = ballotRepository.findByPoll(poll)
-                .fold(SimplePoll<String>()) { p, b -> p.vote(b); p }
-                .result(poll.method.implementation)
-                .with(poll.candidates)
+                .fold(emptyPoll<String>()) { p, b -> p + b }
+                .getResult(poll.method.implementation)
                 .orderedCandidates
 
         tokenRepository.deleteByPoll(poll)

@@ -3,9 +3,8 @@ version '1.0-SNAPSHOT'
 
 buildscript {
     ext {
-        kotlinVersion = '1.0.4'
-        springBootVersion = '1.4.1.RELEASE'
-        stormPathVersion = '1.0.4'
+        kotlinVersion = '1.1.1'
+        springBootVersion = '1.5.2.RELEASE'
     }
 
     repositories {
@@ -41,11 +40,11 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
-    compile 'io.springfox:springfox-swagger-ui:2.2.2'
-    compile 'io.springfox:springfox-swagger2:2.2.2'
+    compile 'io.springfox:springfox-swagger-ui:2.4.0'
+    compile 'io.springfox:springfox-swagger2:2.4.0'
 
-    compile 'joda-time:joda-time:2.9.4'
-    compile 'com.github.slimaku:kondorcet:807c65ea0416e43131686974ab3282281244becd'
+    compile 'joda-time:joda-time:2.9.9'
+    compile 'com.github.slimaku:kondorcet:v1.0-rc3'
 
     providedRuntime "org.springframework.boot:spring-boot-starter-tomcat"
 
