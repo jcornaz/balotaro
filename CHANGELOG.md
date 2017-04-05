@@ -1,4 +1,8 @@
 # Change log
+## 1.0.1 (2017-04-05)
+### Fixed
+* Version number format returned by the `GET /` and `GET /version`
+
 ## 1.0.0 (2017-04-05)
 ### Dependencies changes
 #### Updated

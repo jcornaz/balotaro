@@ -13,7 +13,7 @@ object Version {
     val minor = 0
 
     @ApiModelProperty("Patch version (null if it is a pre-release)")
-    val patch: Int? = 0
+    val patch: Int? = 1
 
     @ApiModelProperty("Pre-release label (null if it is not a pre-release)")
     val label: String? = null
@@ -21,5 +21,5 @@ object Version {
     @ApiModelProperty("True if it is a pre-release and false otherwise. (Pre-releases shouldn't be used in production)")
     val isPreRelease = label != null
 
-    override fun toString() = "$major.$minor${patch ?: "-$label"}"
+    override fun toString() = "$major.$minor.${patch ?: "-$label"}"
 }
