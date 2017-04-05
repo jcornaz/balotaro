@@ -1,12 +1,12 @@
 # Change log
-## 1.0-SNAPSHOT
+## 1.0.0 (2017-04-05)
 ### Dependencies changes
 #### Updated
 * Kotlin from 1.0.4 to 1.1.1
 * SpringBoot from 1.4.1 to 1.5.2
 * Swagger from 2.2.2 to 2.4.0
 * JodaTime from 2.9.4 to 2.9.9
-* Kondorcet from 1.0-SNAPSHOT to 1.0-rc3
+* Kondorcet from 1.0-SNAPSHOT to 1.0.0
 
 ## 1.0-rc1
 ### Added

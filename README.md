@@ -1,12 +1,14 @@
 # Balotaro
 [![GPLv3](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://raw.githubusercontent.com/slimaku/balotaro/master/LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0--rc1-brightgreen.svg)](https://github.com/slimaku/balotaro/releases/tag/v1.0-rc1)
+[![Version](https://img.shields.io/badge/version-1.0.0-brightgreen.svg)](https://github.com/slimaku/balotaro/releases/tag/v1.0-rc1)
 [![Build Status](https://travis-ci.org/slimaku/balotaro.svg?branch=master)](https://travis-ci.org/slimaku/balotaro)
 [![Codebeat](https://codebeat.co/badges/04435b31-0902-4b20-b315-138e4e7d8562)](https://codebeat.co/projects/github-com-slimaku-balotaro)
 [![Issues](https://img.shields.io/github/issues/slimaku/balotaro.svg)](https://github.com/slimaku/balotaro/issues)
 [![Pull requests](https://img.shields.io/github/issues-pr/slimaku/balotaro.svg)](https://github.com/slimaku/balotaro/pulls)
 
 RESTFul Web service to vote on any subject using the [Condorcet method](https://en.wikipedia.org/wiki/Condorcet_method).
+
+A running instance is available here : <https://balotaro.herokuapp.com>
 
 ## Setup
 You need a jdk 8 or newer
@@ -27,10 +29,11 @@ spring.data.mongodb.repositories.enabled=true # Enable Mongo repositories.
 spring.data.mongodb.uri=mongodb://localhost/test # Mongo database URI. When set, host and port are ignored.
 spring.data.mongodb.username= # Login user of the mongo server.
 ```
+(It can also be configured with environment variables replaceing dots with underscores. Ex. `SPRING_DATA_MONGODB_URI`)
 
 You may also take a look at this [MongoDB with spring boot tutorial](https://spring.io/guides/gs/accessing-data-mongodb/)
 
-Run it : `mongod`
+Ensure that the mongodb daemon is running (`mongod`)
 
 ### Launch the web service
 Run it with gradle : `./gradlew bootRun`

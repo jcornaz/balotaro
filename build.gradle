@@ -1,5 +1,5 @@
 group 'balotenketo'
-version '1.0-SNAPSHOT'
+version '1.0'
 
 buildscript {
     ext {
@@ -44,7 +44,7 @@ dependencies {
     compile 'io.springfox:springfox-swagger2:2.4.0'
 
     compile 'joda-time:joda-time:2.9.9'
-    compile 'com.github.slimaku:kondorcet:v1.0-rc3'
+    compile 'com.github.slimaku:kondorcet:v1.0.0'
 
     providedRuntime "org.springframework.boot:spring-boot-starter-tomcat"
 
