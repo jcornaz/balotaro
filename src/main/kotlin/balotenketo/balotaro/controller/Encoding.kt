@@ -8,7 +8,7 @@ fun String.decode(): Pair<String, String> =
         Base64Utils.decodeFromUrlSafeString(this).let {
             val idSize = it.first().toInt()
             val id = BigInteger(it.copyOfRange(1, idSize + 1)).toString(16)
-            val secret = BigInteger(it.copyOfRange(idSize + 1, it.size)).toByteArray().let(Base64Utils::encodeToUrlSafeString)
+            val secret = it.copyOfRange(idSize + 1, it.size).let(Base64Utils::encodeToUrlSafeString)
 
             id to secret
         }
