@@ -12,7 +12,7 @@ A running instance is available here : <https://balotaro.herokuapp.com>
 ## Status
 This project is in maintenance mode. Known bugs will be fixed, but no improvement or feature is planned at the moment.
 
-However, feel free to submit [feature requests](issues/new). Appealing features might be implemented.
+However, feel free to submit [feature requests](https://github.com/jcornaz/balotaro/issues/new). Appealing features might be implemented.
 
 ## Setup
 You need a jdk 8 or newer
@@ -116,5 +116,5 @@ It will return a list of the candidates ordered from the winner(s) to the losers
 ```
 
 ## Contribute
-* Submit and discut feature request or bug report to [github issues](issues)
+* Submit and discut feature request or bug report to [github issues](https://github.com/jcornaz/balotaro/issues)
 * Feel free to submit PR against the master branch
