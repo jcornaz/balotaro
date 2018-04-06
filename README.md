@@ -1,20 +1,24 @@
 # Balotaro
-[![GPLv3](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://raw.githubusercontent.com/jcornaz/balotaro/master/LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.1-brightgreen.svg)](https://github.com/jcornaz/balotaro/releases/tag/v1.0-rc1)
+[![GPLv3](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](LICENSE)
+[![Status](https://img.shields.io/badge/status-maintenance-yellowgreen.svg)](https://gist.githubusercontent.com/jcornaz/46736c3d1f21b4c929bd97549b7406b2/raw/ProjectStatusFlow)
+[![Version](https://img.shields.io/github/release/jcornaz/balotaro.svg)](https://github.com/jcornaz/balotaro/releases)
 [![Build Status](https://travis-ci.org/jcornaz/balotaro.svg?branch=master)](https://travis-ci.org/jcornaz/balotaro)
-[![Codebeat](https://codebeat.co/badges/04435b31-0902-4b20-b315-138e4e7d8562)](https://codebeat.co/projects/github-com-slimaku-balotaro)
-[![Issues](https://img.shields.io/github/issues/jcornaz/balotaro.svg)](https://github.com/jcornaz/balotaro/issues)
-[![Pull requests](https://img.shields.io/github/issues-pr/jcornaz/balotaro.svg)](https://github.com/jcornaz/balotaro/pulls)
+[![Code quality](https://codebeat.co/badges/39f258b1-26dc-47f8-86d6-b4d2d91e7060)](https://codebeat.co/projects/github-com-jcornaz-balotaro-master)
 
 RESTFul Web service to vote on any subject using the [Condorcet method](https://en.wikipedia.org/wiki/Condorcet_method).
 
 A running instance is available here : <https://balotaro.herokuapp.com>
 
+## Status
+This project is in maintenance mode. Known bugs will be fixed, but no improvement or feature is planned at the moment.
+
+However, feel free to submit [feature requests](issues/new). Appealing features might be implemented.
+
 ## Setup
 You need a jdk 8 or newer
 
 ### MongoDB
-Install a mongodb server.
+You need a running instance of mongodb.
 
 If MongoDB is not on the same machine or has not a standard installation add the relevant lines in the `./src/main/resources/application.properties` file :
 ```properties
@@ -30,8 +34,6 @@ spring.data.mongodb.uri=mongodb://localhost/test # Mongo database URI. When set,
 spring.data.mongodb.username= # Login user of the mongo server.
 ```
 (It can also be configured with environment variables replaceing dots with underscores. Ex. `SPRING_DATA_MONGODB_URI`)
-
-You may also take a look at this [MongoDB with spring boot tutorial](https://spring.io/guides/gs/accessing-data-mongodb/)
 
 Ensure that the mongodb daemon is running (`mongod`)
 
@@ -112,3 +114,7 @@ It will return a list of the candidates ordered from the winner(s) to the losers
 ```json
 [["mardo"], ["lundo", "ĵaŭdo"], ["vendredo"], ["lundo", "merkredo"]]
 ```
+
+## Contribute
+* Submit and discut feature request or bug report to [github issues](issues)
+* Feel free to submit PR against the master branch
