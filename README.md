@@ -1,18 +1,14 @@
 # Balotaro
 [![GPLv3](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/status-maintenance-yellowgreen.svg)](https://gist.githubusercontent.com/jcornaz/46736c3d1f21b4c929bd97549b7406b2/raw/ProjectStatusFlow)
+[![Status](https://img.shields.io/badge/status-discontinued-lightgray.svg)](https://gist.githubusercontent.com/jcornaz/46736c3d1f21b4c929bd97549b7406b2/raw/ProjectStatusFlow)
 [![Version](https://img.shields.io/github/release/jcornaz/balotaro.svg)](https://github.com/jcornaz/balotaro/releases)
 [![Build Status](https://travis-ci.org/jcornaz/balotaro.svg?branch=master)](https://travis-ci.org/jcornaz/balotaro)
 [![Code quality](https://codebeat.co/badges/39f258b1-26dc-47f8-86d6-b4d2d91e7060)](https://codebeat.co/projects/github-com-jcornaz-balotaro-master)
 
 RESTFul Web service to vote on any subject using the [Condorcet method](https://en.wikipedia.org/wiki/Condorcet_method).
 
-A running instance is available here : <https://balotaro.herokuapp.com>
-
 ## Status
-This project is in maintenance mode. Known bugs will be fixed, but no improvement or feature is planned at the moment.
-
-However, feel free to submit [feature requests](https://github.com/jcornaz/balotaro/issues/new). Appealing features might be implemented.
+This project is discontinued and will no longer be maintained. Anyone is free to fork and create derived products.
 
 ## Setup
 You need a jdk 8 or newer
